@@ -12,18 +12,16 @@ export function QuizProgress({ current, total }: QuizProgressProps) {
   const progress = ((current + 1) / total) * 100;
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <Badge className="bg-terracotta-100 text-terracotta-400 font-medium text-sm px-4 py-1.5 rounded-full">
-          Question {current + 1} of {total}
-        </Badge>
-        <span className="text-sm text-brown-400 font-medium">
+    <div className="space-y-2">
+      {/* Centered percentage above bar */}
+      <div className="flex justify-center">
+        <span className="text-xl text-terracotta-400 font-semibold">
           {Math.round(progress)}%
         </span>
       </div>
       <Progress
         value={progress}
-        className="h-2 bg-cream-300"
+        className="h-3 bg-cream-300"
       />
     </div>
   );

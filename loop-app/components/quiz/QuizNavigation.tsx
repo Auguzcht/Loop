@@ -25,38 +25,56 @@ export function QuizNavigation({
   canGoBack,
   canGoForward,
 }: QuizNavigationProps) {
-  const { playClick } = useSounds();
+  const { playPageClick } = useSounds();
 
   const handlePrevious = () => {
-    playClick();
+    playPageClick();
     onPrevious();
   };
 
   const handleNext = () => {
-    playClick();
+    playPageClick();
     onNext();
   };
 
   const handleSubmit = () => {
-    playClick();
+    playPageClick();
     onSubmit();
   };
   return (
-    <div className="flex justify-between items-center gap-4">
+    <div className="flex items-center justify-between gap-4">
       <Button
         onClick={handlePrevious}
         disabled={!canGoBack}
         variant="outline"
-        className="bg-cream-200 hover:bg-cream-300 text-brown-500 border-2 border-cream-400 px-6 py-6 rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        className="bg-cream-200 hover:bg-cream-300 text-brown-500 border-2 border-cream-400 px-8 py-7 rounded-xl font-medium text-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-md"
       >
         <ChevronLeft className="w-5 h-5 mr-2" />
         Previous
       </Button>
 
+      {/* Center indicator */}
+      <div className="flex-1 flex items-center justify-center gap-2">
+        <div className="flex gap-1.5">
+          {Array.from({ length: totalQuestions }).map((_, index) => (
+            <div
+              key={index}
+              className={`h-2 rounded-full transition-all ${
+                index === currentIndex
+                  ? 'w-8 bg-terracotta-400'
+                  : index < currentIndex
+                  ? 'w-2 bg-terracotta-300'
+                  : 'w-2 bg-cream-400'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+
       {isLastQuestion ? (
         <Button
           onClick={handleSubmit}
-          className="bg-terracotta-300 hover:bg-terracotta-400 text-white px-8 py-6 rounded-xl font-medium transition-all hover:shadow-lg"
+          className="bg-terracotta-300 hover:bg-terracotta-400 text-white px-8 py-7 rounded-xl font-medium text-lg transition-all hover:shadow-lg hover:scale-105"
         >
           Submit Quiz
           <Send className="w-5 h-5 ml-2" />
@@ -65,9 +83,9 @@ export function QuizNavigation({
         <Button
           onClick={handleNext}
           disabled={!canGoForward}
-          className="bg-terracotta-300 hover:bg-terracotta-400 text-white px-8 py-6 rounded-xl font-medium transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-terracotta-300 hover:bg-terracotta-400 text-white px-8 py-7 rounded-xl font-medium text-lg transition-all hover:shadow-lg hover:scale-105 disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          Next Question
+          Next
           <ChevronRight className="w-5 h-5 ml-2" />
         </Button>
       )}

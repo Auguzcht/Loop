@@ -15,6 +15,7 @@ import { QuizTimer } from './QuizTimer';
 import { QuestionCard } from './QuestionCard';
 import { QuizNavigation } from './QuizNavigation';
 import { CountdownOverlay } from './CountdownOverlay';
+import { Badge } from '@/components/ui/badge';
 
 export function QuizContainer() {
   const router = useRouter();
@@ -155,7 +156,7 @@ export function QuizContainer() {
     const currentAnswer = state.answers.get(currentQuestion.id);
     const isLastQuestion = state.currentIndex === state.questions.length - 1;
     return (
-      <div className="min-h-screen bg-cream-50 py-8 px-4">
+      <div className="min-h-screen bg-cream-50 pb-32">
         {/* Countdown overlay */}
         <AnimatePresence>
           {showCountdown && (
@@ -172,20 +173,28 @@ export function QuizContainer() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="max-w-3xl mx-auto space-y-6"
+          className="max-w-4xl mx-auto py-8 px-4 space-y-8"
         >
           {/* Header with progress and timer */}
           <motion.div 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="flex items-center justify-between"
+            className="space-y-4"
           >
+            {/* Question badge and timer */}
+            <div className="flex items-center justify-between">
+              <Badge className="bg-terracotta-100 text-terracotta-400 font-medium text-base px-5 py-2 rounded-full">
+                Question {state.currentIndex + 1} of {state.questions.length}
+              </Badge>
+              <QuizTimer timeRemaining={state.timeRemaining} />
+            </div>
+            
+            {/* Progress bar with centered percentage */}
             <QuizProgress
               current={state.currentIndex}
               total={state.questions.length}
             />
-            <QuizTimer timeRemaining={state.timeRemaining} />
           </motion.div>
 
           {/* Question card */}
@@ -196,13 +205,16 @@ export function QuizContainer() {
               onAnswer={setAnswer}
             />
           </AnimatePresence>
+        </motion.div>
 
-          {/* Navigation */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
+        {/* Fixed bottom navigation */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="fixed bottom-0 left-0 right-0 bg-cream-50 border-t-2 border-cream-300 shadow-lg"
+        >
+          <div className="max-w-4xl mx-auto px-4 py-6">
             <QuizNavigation
               currentIndex={state.currentIndex}
               totalQuestions={state.questions.length}
@@ -213,7 +225,7 @@ export function QuizContainer() {
               canGoBack={state.currentIndex > 0}
               canGoForward={state.currentIndex < state.questions.length - 1}
             />
-          </motion.div>
+          </div>
         </motion.div>
       </div>
     );

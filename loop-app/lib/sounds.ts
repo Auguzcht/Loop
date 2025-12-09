@@ -9,6 +9,7 @@ class SoundManager {
     if (typeof window !== 'undefined') {
       // Initialize sounds
       this.loadSound('click', '/sounds/Answer-Selection-Click-Sfx.mp3');
+      this.loadSound('pageClick', '/sounds/Quiz-Page-Button-Click-Sfx.mp3');
       this.loadSound('countdown', '/sounds/Quiz-Start-Countdown-Sfx.mp3');
       this.loadSound('end', '/sounds/Quizc-End-Chime-Sfx.mp3');
       this.loadSound('timer', '/sounds/Timer-Sfx.mp3');
@@ -142,6 +143,7 @@ export const soundManager = new SoundManager();
 // Hook for React components
 export function useSounds() {
   const playClick = () => soundManager.play('click');
+  const playPageClick = () => soundManager.play('pageClick');
   const playCountdown = () => soundManager.play('countdown');
   const playEnd = () => soundManager.play('end');
   const playTimer = () => soundManager.play('timer');
@@ -154,6 +156,7 @@ export function useSounds() {
 
   return {
     playClick,
+    playPageClick,
     playCountdown,
     playEnd,
     playTimer,

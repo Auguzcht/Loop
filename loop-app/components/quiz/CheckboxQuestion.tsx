@@ -35,8 +35,9 @@ export function CheckboxQuestion({
         {question.choices.map((choice, index) => {
           const isChecked = value.includes(index);
           return (
-            <div
+            <Label
               key={index}
+              htmlFor={`${question.id}-${index}`}
               className={`flex items-center space-x-4 p-5 rounded-xl border-2 transition-all cursor-pointer ${
                 isChecked
                   ? 'bg-terracotta-50 border-terracotta-300'
@@ -49,13 +50,10 @@ export function CheckboxQuestion({
                 checked={isChecked}
                 onCheckedChange={() => handleToggle(index)}
               />
-              <Label
-                htmlFor={`${question.id}-${index}`}
-                className="flex-1 text-lg text-brown-500 cursor-pointer"
-              >
+              <span className="flex-1 text-lg text-brown-500">
                 {choice}
-              </Label>
-            </div>
+              </span>
+            </Label>
           );
         })}
       </div>

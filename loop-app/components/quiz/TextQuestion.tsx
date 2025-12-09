@@ -24,7 +24,7 @@ export function TextQuestion({ question, value, onChange }: TextQuestionProps) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Type your answer..."
-        className="bg-cream-100 border-2 border-cream-400 focus:border-terracotta-300 focus:ring-terracotta-200 text-brown-500 placeholder:text-brown-300 text-lg px-6 py-6 rounded-xl transition-colors"
+        className="bg-cream-100 border-2 border-cream-400 focus:bg-white focus:border-terracotta-300 focus:ring-terracotta-200 text-brown-900 placeholder:text-brown-300 text-lg px-6 py-6 rounded-xl transition-all"
       />
     </div>
   );

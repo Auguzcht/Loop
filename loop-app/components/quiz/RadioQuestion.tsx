@@ -29,18 +29,16 @@ export function RadioQuestion({ question, value, onChange }: RadioQuestionProps)
         className="space-y-3"
       >
         {question.choices.map((choice, index) => (
-          <div
+          <Label
             key={index}
-            className="flex items-center space-x-4 p-5 rounded-xl border-2 border-cream-400 hover:border-terracotta-300 hover:bg-cream-200 transition-all cursor-pointer has-data-[state=checked]:bg-terracotta-50 has-data-[state=checked]:border-terracotta-300"
+            htmlFor={`${question.id}-${index}`}
+            className="flex items-center space-x-4 p-5 rounded-xl border-2 border-cream-400 hover:border-terracotta-300 hover:bg-cream-200 transition-all cursor-pointer has-[:checked]:bg-terracotta-50 has-[:checked]:border-terracotta-300"
           >
             <RadioGroupItem value={index.toString()} id={`${question.id}-${index}`} />
-            <Label
-              htmlFor={`${question.id}-${index}`}
-              className="flex-1 text-lg text-brown-500 cursor-pointer"
-            >
+            <span className="flex-1 text-lg text-brown-500">
               {choice}
-            </Label>
-          </div>
+            </span>
+          </Label>
         ))}
       </RadioGroup>
     </div>
