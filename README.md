@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://github.com/Auguzcht/Loop/blob/main/loop-app/public/loop-logo.svg" alt="Loop Logo" width="400"/>
+  <img src="loop-app/public/Loop-Logo-Yellow-BG.png" alt="Loop Logo" width="400"/>
   
   <h1>Loop</h1>
   
