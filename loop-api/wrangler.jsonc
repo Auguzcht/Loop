@@ -2,7 +2,10 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "loop-api",
   "main": "src/index.ts",
-  "compatibility_date": "2025-12-09"
+  "compatibility_date": "2025-12-09",
+  "dev": {
+    "port": 8787
+  }
   // "compatibility_flags": [
   //   "nodejs_compat"
   // ],

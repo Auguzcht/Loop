@@ -1,9 +1,24 @@
+'use client';
+
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo, Tagline } from '@/components/shared/Logo';
 import { ArrowRight, Clock, ListChecks, Trophy } from 'lucide-react';
+import { useSounds } from '@/lib/sounds';
 
 export default function Home() {
+  const { playBackground, stopBackground } = useSounds();
+
+  useEffect(() => {
+    // Play background music when landing page loads
+    playBackground();
+
+    // Stop when component unmounts
+    return () => {
+      stopBackground();
+    };
+  }, [playBackground, stopBackground]);
   return (
     <div className="min-h-screen bg-cream-50 flex items-center justify-center p-4">
       <main className="w-full max-w-2xl text-center space-y-12">
@@ -62,7 +77,10 @@ export default function Home() {
         {/* Start Button */}
         <div>
           <Link href="/quiz">
-            <Button className="bg-terracotta-300 hover:bg-terracotta-400 text-white px-12 py-7 rounded-xl text-lg font-medium transition-all hover:shadow-lg">
+            <Button 
+              onClick={() => playBackground()}
+              className="bg-terracotta-300 hover:bg-terracotta-400 text-white px-12 py-7 rounded-xl text-lg font-medium transition-all hover:shadow-lg"
+            >
               Start Quiz
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>

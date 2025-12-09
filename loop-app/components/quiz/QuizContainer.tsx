@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuiz } from '@/hooks/useQuiz';
 import { useQuizTimer } from '@/hooks/useQuizTimer';
+import { useSounds } from '@/lib/sounds';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,9 @@ import { QuizNavigation } from './QuizNavigation';
 
 export function QuizContainer() {
   const router = useRouter();
+  const { playCountdown, playEnd, playTimer, stopBackground } = useSounds();
+  const hasPlayedCountdown = useRef(false);
+  const hasPlayedTimerWarning = useRef(false);
   const {
     state,
     startQuiz,
@@ -28,7 +32,17 @@ export function QuizContainer() {
   // Load quiz on mount
   useEffect(() => {
     startQuiz();
-  }, [startQuiz]);
+    stopBackground(); // Stop landing page music
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Play countdown sound when quiz becomes active
+  useEffect(() => {
+    if (state.status === 'active' && !hasPlayedCountdown.current) {
+      playCountdown();
+      hasPlayedCountdown.current = true;
+    }
+  }, [state.status, playCountdown]);
 
   // Handle timer
   useQuizTimer({
@@ -40,9 +54,18 @@ export function QuizContainer() {
     },
   });
 
+  // Play timer warning sound when < 10 seconds
+  useEffect(() => {
+    if (state.status === 'active' && state.timeRemaining === 10 && !hasPlayedTimerWarning.current) {
+      playTimer();
+      hasPlayedTimerWarning.current = true;
+    }
+  }, [state.timeRemaining, state.status, playTimer]);
+
   // Redirect to results when completed
   useEffect(() => {
     if (state.status === 'completed') {
+      playEnd();
       // Store results in sessionStorage for the results page
       sessionStorage.setItem(
         'quizResults',
@@ -54,7 +77,7 @@ export function QuizContainer() {
       );
       router.push('/results');
     }
-  }, [state.status, state.score, state.total, state.results, router]);
+  }, [state.status, state.score, state.total, state.results, router, playEnd]);
 
   // Loading state
   if (state.status === 'loading') {

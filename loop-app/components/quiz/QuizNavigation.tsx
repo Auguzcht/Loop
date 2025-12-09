@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Send } from 'lucide-react';
+import { useSounds } from '@/lib/sounds';
 
 interface QuizNavigationProps {
   currentIndex: number;
@@ -24,10 +25,26 @@ export function QuizNavigation({
   canGoBack,
   canGoForward,
 }: QuizNavigationProps) {
+  const { playClick } = useSounds();
+
+  const handlePrevious = () => {
+    playClick();
+    onPrevious();
+  };
+
+  const handleNext = () => {
+    playClick();
+    onNext();
+  };
+
+  const handleSubmit = () => {
+    playClick();
+    onSubmit();
+  };
   return (
     <div className="flex justify-between items-center gap-4">
       <Button
-        onClick={onPrevious}
+        onClick={handlePrevious}
         disabled={!canGoBack}
         variant="outline"
         className="bg-cream-200 hover:bg-cream-300 text-brown-500 border-2 border-cream-400 px-6 py-6 rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
@@ -38,7 +55,7 @@ export function QuizNavigation({
 
       {isLastQuestion ? (
         <Button
-          onClick={onSubmit}
+          onClick={handleSubmit}
           className="bg-terracotta-300 hover:bg-terracotta-400 text-white px-8 py-6 rounded-xl font-medium transition-all hover:shadow-lg"
         >
           Submit Quiz
@@ -46,7 +63,7 @@ export function QuizNavigation({
         </Button>
       ) : (
         <Button
-          onClick={onNext}
+          onClick={handleNext}
           disabled={!canGoForward}
           className="bg-terracotta-300 hover:bg-terracotta-400 text-white px-8 py-6 rounded-xl font-medium transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
         >

@@ -1,6 +1,6 @@
 import type { QuizResponse, GradeResponse, Answer } from '@/types/quiz';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8788';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8787';
 
 /**
  * Fetches quiz questions from the API
@@ -38,17 +38,24 @@ export async function fetchQuiz(): Promise<QuizResponse> {
  */
 export async function submitQuiz(answers: Answer[]): Promise<GradeResponse> {
   try {
+    const payload = { answers };
+    console.log('Submitting quiz with payload:', payload);
+
     const response = await fetch(`${API_BASE_URL}/api/grade`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      body: JSON.stringify({ answers }),
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to submit quiz: ${response.statusText}`);
+      const errorData = await response.json().catch(() => null);
+      console.error('Submit error:', response.status, errorData);
+      throw new Error(
+        `Failed to submit quiz: ${response.statusText}${errorData ? ` - ${JSON.stringify(errorData)}` : ''}`
+      );
     }
 
     const data = await response.json();

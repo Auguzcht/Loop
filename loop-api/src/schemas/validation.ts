@@ -3,12 +3,16 @@ import { z } from 'zod';
 // Answer schema
 export const AnswerSchema = z.object({
   id: z.string().min(1),
-  value: z.union([z.string(), z.number(), z.array(z.number())]),
+  value: z.union([
+    z.string(),
+    z.number(),
+    z.array(z.number()),
+  ]),
 });
 
-// Grade request schema
+// Grade request schema - allow 0 to 12 answers
 export const GradeRequestSchema = z.object({
-  answers: z.array(AnswerSchema).min(1).max(12),
+  answers: z.array(AnswerSchema).min(0).max(12),
 });
 
 // Export TypeScript types

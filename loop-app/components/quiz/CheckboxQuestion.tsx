@@ -3,6 +3,7 @@
 import type { CheckboxQuestion as CheckboxQuestionType } from '@/types/quiz';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { useSounds } from '@/lib/sounds';
 
 interface CheckboxQuestionProps {
   question: CheckboxQuestionType;
@@ -15,7 +16,10 @@ export function CheckboxQuestion({
   value = [],
   onChange,
 }: CheckboxQuestionProps) {
+  const { playClick } = useSounds();
+
   const handleToggle = (index: number) => {
+    playClick();
     const newValue = value.includes(index)
       ? value.filter((v) => v !== index)
       : [...value, index];

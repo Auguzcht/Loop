@@ -3,6 +3,7 @@
 import type { RadioQuestion as RadioQuestionType } from '@/types/quiz';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import { useSounds } from '@/lib/sounds';
 
 interface RadioQuestionProps {
   question: RadioQuestionType;
@@ -11,6 +12,12 @@ interface RadioQuestionProps {
 }
 
 export function RadioQuestion({ question, value, onChange }: RadioQuestionProps) {
+  const { playClick } = useSounds();
+
+  const handleChange = (val: string) => {
+    playClick();
+    onChange(parseInt(val, 10));
+  };
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-medium text-brown-500 mb-6">
@@ -18,13 +25,13 @@ export function RadioQuestion({ question, value, onChange }: RadioQuestionProps)
       </h2>
       <RadioGroup
         value={value?.toString()}
-        onValueChange={(val) => onChange(parseInt(val, 10))}
+        onValueChange={handleChange}
         className="space-y-3"
       >
         {question.choices.map((choice, index) => (
           <div
             key={index}
-            className="flex items-center space-x-4 p-5 rounded-xl border-2 border-cream-400 hover:border-terracotta-300 hover:bg-cream-200 transition-all cursor-pointer has-[[data-state=checked]]:bg-terracotta-50 has-[[data-state=checked]]:border-terracotta-300"
+            className="flex items-center space-x-4 p-5 rounded-xl border-2 border-cream-400 hover:border-terracotta-300 hover:bg-cream-200 transition-all cursor-pointer has-data-[state=checked]:bg-terracotta-50 has-data-[state=checked]:border-terracotta-300"
           >
             <RadioGroupItem value={index.toString()} id={`${question.id}-${index}`} />
             <Label

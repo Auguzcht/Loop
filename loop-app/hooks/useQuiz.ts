@@ -156,16 +156,34 @@ export function useQuiz() {
   const submitQuizAnswers = useCallback(async () => {
     dispatch({ type: 'SUBMIT_QUIZ' });
     try {
-      const answers = Array.from(state.answers.values());
-      const result = await submitQuiz(answers);
-      dispatch({ type: 'SUBMIT_SUCCESS', payload: result });
+      // Convert Map to Array and ensure we have valid answers
+      const answers = Array.from(state.answers.values()).filter(
+        (answer) => answer.value !== undefined && answer.value !== null && answer.value !== ''
+      );
+
+      console.log('Submitting answers:', answers);
+
+      // If no answers, still submit (will get 0 score)
+      if (answers.length === 0) {
+        // Create empty answers for all questions to ensure validation passes
+        const emptyAnswers = state.questions.map((q) => ({
+          id: q.id,
+          value: q.type === 'checkbox' ? [] : '',
+        }));
+        const result = await submitQuiz(emptyAnswers);
+        dispatch({ type: 'SUBMIT_SUCCESS', payload: result });
+      } else {
+        const result = await submitQuiz(answers);
+        dispatch({ type: 'SUBMIT_SUCCESS', payload: result });
+      }
     } catch (error) {
+      console.error('Submit quiz error:', error);
       dispatch({
         type: 'SUBMIT_ERROR',
         payload: error instanceof Error ? error.message : 'Failed to submit quiz',
       });
     }
-  }, [state.answers]);
+  }, [state.answers, state.questions]);
 
   // Reset quiz
   const resetQuiz = useCallback(() => {

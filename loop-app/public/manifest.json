@@ -1,0 +1,27 @@
+{
+  "name": "Loop - Quiz App",
+  "short_name": "Loop",
+  "description": "Test your web development knowledge with Loop's interactive quiz",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFBED",
+  "theme_color": "#D4845C",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon_io/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon_io/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "quiz", "games"],
+  "lang": "en-US",
+  "dir": "ltr"
+}

@@ -20,7 +20,6 @@ quiz.get('/', (c) => {
       questions: publicQuestions,
     });
   } catch (error) {
-    console.error('Error fetching quiz:', error);
     return c.json({ error: 'Failed to load questions' }, 500);
   }
 });

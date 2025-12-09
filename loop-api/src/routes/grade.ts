@@ -19,7 +19,6 @@ grade.post('/', zValidator('json', GradeRequestSchema), async (c) => {
 
     return c.json(result);
   } catch (error) {
-    console.error('Error grading quiz:', error);
     return c.json({ error: 'Failed to grade quiz' }, 500);
   }
 });
