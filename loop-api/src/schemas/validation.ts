@@ -8,6 +8,7 @@ export const AnswerSchema = z.object({
     z.number(),
     z.array(z.number()),
   ]),
+  timeSpent: z.number().optional(), // Time in milliseconds
 });
 
 // Grade request schema - allow 0 to 12 answers

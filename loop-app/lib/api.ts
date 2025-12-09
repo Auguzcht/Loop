@@ -9,7 +9,16 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8787';
  */
 export async function fetchQuiz(): Promise<QuizResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/quiz`, {
+    // Generate a session ID for deterministic shuffling
+    const sessionId = typeof window !== 'undefined' 
+      ? (sessionStorage.getItem('sessionId') || generateSessionId())
+      : generateSessionId();
+    
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('sessionId', sessionId);
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/quiz?shuffle=true&session_id=${sessionId}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -28,6 +37,13 @@ export async function fetchQuiz(): Promise<QuizResponse> {
       error instanceof Error ? error.message : 'Failed to load quiz questions'
     );
   }
+}
+
+/**
+ * Generate a unique session ID
+ */
+function generateSessionId(): string {
+  return `session-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
 }
 
 /**

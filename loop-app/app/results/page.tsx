@@ -1,15 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useState, useRef } from 'react';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { Logo } from '@/components/shared/Logo';
-import { LoadingScreen } from '@/components/shared/LoadingScreen';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Trophy, RotateCw, Home, CheckCircle2, XCircle } from 'lucide-react';
+import { ResultsCard } from '@/components/results/ResultsCard';
+import { ResultsActions } from '@/components/results/ResultsActions';
+import { ScrollIndicator } from '@/components/results/ScrollIndicator';
+import { DynamicGradient } from '@/components/results/DynamicGradient';
+import { AnalyticsSection } from '@/components/results/AnalyticsSection';
 import type { QuestionResult } from '@/types/quiz';
 
 interface QuizResults {
@@ -21,14 +20,24 @@ interface QuizResults {
 export default function ResultsPage() {
   const router = useRouter();
   const [results, setResults] = useState<QuizResults | null>(null);
+  const [questions, setQuestions] = useState<any[]>([]);
+  const [showAnalytics, setShowAnalytics] = useState(false);
+  const analyticsRef = useRef<HTMLDivElement>(null);
+  const isAnalyticsInView = useInView(analyticsRef, { once: false, margin: "0px" });
 
   useEffect(() => {
     const stored = sessionStorage.getItem('quizResults');
+    const storedQuestions = sessionStorage.getItem('quizQuestions');
+    
     if (stored) {
       setResults(JSON.parse(stored));
     } else {
       // No results found, redirect to home
       router.push('/');
+    }
+
+    if (storedQuestions) {
+      setQuestions(JSON.parse(storedQuestions));
     }
   }, [router]);
 
@@ -42,142 +51,96 @@ export default function ResultsPage() {
 
   const percentage = Math.round((results.score / results.total) * 100);
   const passed = percentage >= 70;
+  const correctCount = results.results.filter(r => r.correct).length;
+  const incorrectCount = results.results.filter(r => r.correct === false).length;
+  const scrollToAnalytics = () => {
+    setShowAnalytics(true);
+    // Immediately scroll to analytics
+    setTimeout(() => {
+      window.scrollTo({ 
+        top: window.innerHeight,
+        behavior: 'smooth'
+      });
+    }, 100);
+  };
 
   return (
-    <div className="min-h-screen bg-cream-50 py-12 px-4">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-2xl mx-auto space-y-8"
-      >
-        {/* Logo */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-          className="flex justify-center"
-        >
-          <Logo size="md" />
-        </motion.div>
-
-        {/* Results Card */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-        >
-          <Card className="bg-cream-100 border-2 border-cream-400 rounded-2xl p-10 text-center space-y-6">
-            {/* Trophy Icon */}
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
-              className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto ${
-                passed ? 'bg-sage-100' : 'bg-amber-100'
-              }`}
-            >
-              <Trophy
-                className={`w-10 h-10 ${passed ? 'text-sage-400' : 'text-amber-600'}`}
-              />
-            </motion.div>
-
-          {/* Title */}
-          <div className="space-y-2">
-            <h1 className="text-4xl font-medium text-brown-500">
-              Quiz Complete!
-            </h1>
-            <p className="text-lg text-brown-400">
-              Here's how you performed
-            </p>
-          </div>
-
-          {/* Score */}
-          <div className="space-y-3">
-            <Badge className="bg-sage-100 text-sage-400 font-bold text-3xl px-8 py-3 rounded-xl">
-              {results.score} / {results.total}
-            </Badge>
-            <p className="text-5xl font-bold text-terracotta-400">
-              {percentage}%
-            </p>
-          </div>
-
-          {/* Message */}
-          <div className="pt-4">
-            {percentage >= 90 && (
-              <p className="text-lg text-sage-400 font-medium">
-                🎉 Outstanding! You're a true expert!
-              </p>
-            )}
-            {percentage >= 70 && percentage < 90 && (
-              <p className="text-lg text-sage-400 font-medium">
-                ✨ Great job! You passed with flying colors!
-              </p>
-            )}
-            {percentage >= 50 && percentage < 70 && (
-              <p className="text-lg text-amber-600 font-medium">
-                📚 Good effort! A bit more practice and you'll ace it!
-              </p>
-            )}
-            {percentage < 50 && (
-              <p className="text-lg text-brown-400 font-medium">
-                💪 Keep learning! Try again to improve your score!
-              </p>
-            )}
-          </div>
-        </Card>
-        </motion.div>
-
-        {/* Question Breakdown */}
-        <Card className="bg-cream-100 border-2 border-cream-400 rounded-2xl p-8">
-          <h2 className="text-2xl font-medium text-brown-500 mb-6">
-            Question Breakdown
-          </h2>
-          <div className="grid grid-cols-6 gap-3">
-            {results.results.map((result, index) => (
-              <div
-                key={result.id}
-                className={`flex items-center justify-center w-12 h-12 rounded-lg font-medium ${
-                  result.correct
-                    ? 'bg-sage-100 text-sage-400'
-                    : 'bg-red-100 text-red-400'
-                }`}
-                title={result.correct ? 'Correct' : 'Incorrect'}
-              >
-                {result.correct ? (
-                  <CheckCircle2 className="w-5 h-5" />
-                ) : (
-                  <XCircle className="w-5 h-5" />
-                )}
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        {/* Actions */}
+    <div className="bg-cream-50 relative min-h-screen">
+      {/* Results Section - Full viewport, no scroll initially */}
+      <div className={`h-screen flex flex-col items-center justify-center px-4 relative ${!showAnalytics ? 'overflow-hidden' : ''}`}>
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="flex flex-col sm:flex-row gap-4"
+          transition={{ duration: 0.5 }}
+          className="max-w-2xl mx-auto w-full space-y-5"
         >
-          <Link href="/quiz" className="flex-1">
-            <Button className="w-full bg-terracotta-300 hover:bg-terracotta-400 text-white px-8 py-6 rounded-xl font-medium transition-all hover:shadow-lg hover:scale-105">
-              <RotateCw className="w-5 h-5 mr-2" />
-              Try Again
-            </Button>
-          </Link>
-          <Link href="/" className="flex-1">
-            <Button
-              variant="outline"
-              className="w-full bg-cream-200 hover:bg-cream-300 text-brown-500 border-2 border-cream-400 px-8 py-6 rounded-xl font-medium transition-all hover:scale-105"
-            >
-              <Home className="w-5 h-5 mr-2" />
-              Go Home
-            </Button>
-          </Link>
+          {/* Logo */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
+            className="flex justify-center"
+          >
+            <Logo size="md" />
+          </motion.div>
+
+          {/* Results Card */}
+          <ResultsCard
+            score={results.score}
+            total={results.total}
+            percentage={percentage}
+            passed={passed}
+          />
+
+          {/* Actions */}
+          <ResultsActions />
         </motion.div>
-      </motion.div>
+
+        {/* Dynamic Gradient at Bottom - Only when analytics hidden */}
+        <AnimatePresence>
+          {!showAnalytics && <DynamicGradient isVisible={!showAnalytics} />}
+        </AnimatePresence>
+
+        {/* Scroll Down Indicator - Positioned at bottom of results section */}
+        <AnimatePresence>
+          {!showAnalytics && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.5 }}
+              className="absolute bottom-8 z-30"
+            >
+              <ScrollIndicator onClick={scrollToAnalytics} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Analytics Section - Only visible after clicking scroll indicator */}
+      <AnimatePresence>
+        {showAnalytics && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+            className="bg-cream-50"
+          >
+            <div className="bg-cream-50">
+              <AnalyticsSection
+                ref={analyticsRef}
+                results={results.results}
+                questions={questions}
+                correctCount={correctCount}
+                incorrectCount={incorrectCount}
+                percentage={percentage}
+                isInView={isAnalyticsInView}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

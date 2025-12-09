@@ -86,7 +86,7 @@ export function QuizContainer() {
   useEffect(() => {
     if (state.status === 'completed') {
       playEnd();
-      // Store results in sessionStorage for the results page
+      // Store results and questions in sessionStorage for the results page
       sessionStorage.setItem(
         'quizResults',
         JSON.stringify({
@@ -95,9 +95,13 @@ export function QuizContainer() {
           results: state.results,
         })
       );
+      sessionStorage.setItem(
+        'quizQuestions',
+        JSON.stringify(state.questions)
+      );
       router.push('/results');
     }
-  }, [state.status, state.score, state.total, state.results, router, playEnd]);
+  }, [state.status, state.score, state.total, state.results, state.questions, router, playEnd]);
 
   // Loading state
   if (state.status === 'loading') {

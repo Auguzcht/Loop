@@ -13,6 +13,7 @@ const initialState: QuizState = {
   total: null,
   results: [],
   error: null,
+  questionStartTime: null, // Track when current question started
 };
 
 // Quiz reducer
@@ -34,6 +35,7 @@ function quizReducer(state: QuizState, action: QuizAction): QuizState {
         answers: new Map(),
         timeRemaining: 60,
         error: null,
+        questionStartTime: Date.now(), // Start timing first question
       };
 
     case 'LOAD_QUESTIONS_ERROR':
@@ -45,7 +47,12 @@ function quizReducer(state: QuizState, action: QuizAction): QuizState {
 
     case 'SET_ANSWER': {
       const newAnswers = new Map(state.answers);
-      newAnswers.set(action.payload.id, action.payload);
+      // Calculate time spent on this question
+      const timeSpent = state.questionStartTime ? Date.now() - state.questionStartTime : undefined;
+      newAnswers.set(action.payload.id, {
+        ...action.payload,
+        timeSpent,
+      });
       return {
         ...state,
         answers: newAnswers,
@@ -56,12 +63,14 @@ function quizReducer(state: QuizState, action: QuizAction): QuizState {
       return {
         ...state,
         currentIndex: Math.min(state.currentIndex + 1, state.questions.length - 1),
+        questionStartTime: Date.now(), // Reset timer for next question
       };
 
     case 'PREVIOUS_QUESTION':
       return {
         ...state,
         currentIndex: Math.max(state.currentIndex - 1, 0),
+        questionStartTime: Date.now(), // Reset timer when going back
       };
 
     case 'GO_TO_QUESTION':
@@ -71,6 +80,7 @@ function quizReducer(state: QuizState, action: QuizAction): QuizState {
           0,
           Math.min(action.payload, state.questions.length - 1)
         ),
+        questionStartTime: Date.now(), // Reset timer for jumped-to question
       };
 
     case 'TICK_TIMER':

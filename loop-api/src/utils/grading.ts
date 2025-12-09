@@ -27,9 +27,15 @@ export function gradeAnswers(
       score++;
     }
 
+    // Get the correct answer for this question
+    const correctAnswer = getCorrectAnswer(question);
+
     results.push({
       id: question.id,
       correct,
+      timeSpent: userAnswer?.timeSpent,
+      userAnswer: userAnswer?.value,
+      correctAnswer,
     });
   }
 
@@ -38,6 +44,22 @@ export function gradeAnswers(
     total: questions.length,
     results,
   };
+}
+
+/**
+ * Gets the correct answer for a question
+ * @param question - The question
+ * @returns The correct answer value
+ */
+function getCorrectAnswer(question: Question): string | number | number[] {
+  switch (question.type) {
+    case 'radio':
+      return question.correctIndex;
+    case 'checkbox':
+      return question.correctIndexes;
+    case 'text':
+      return question.correctText;
+  }
 }
 
 /**

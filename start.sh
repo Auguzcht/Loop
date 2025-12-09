@@ -3,12 +3,12 @@
 # Quick Start Script for Loop Quiz App
 # Run this to start both backend and frontend servers
 
-echo "🚀 Starting Loop Quiz App..."
+echo "Starting Loop Quiz App..."
 echo ""
 
 # Check if we're in the right directory
 if [ ! -d "loop-api" ] || [ ! -d "loop-app" ]; then
-    echo "❌ Error: Please run this script from the Loop repository root"
+    echo "Error: Please run this script from the Loop repository root"
     exit 1
 fi
 
@@ -21,12 +21,12 @@ check_port() {
 # Kill existing processes on ports
 echo "🔍 Checking for existing processes..."
 if check_port 8787; then
-    echo "⚠️  Port 8787 is in use. Killing process..."
+    echo "Port 8787 is in use. Killing process..."
     lsof -ti :8787 | xargs kill -9 2>/dev/null
 fi
 
 if check_port 3000; then
-    echo "⚠️  Port 3000 is in use. Killing process..."
+    echo "Port 3000 is in use. Killing process..."
     lsof -ti :3000 | xargs kill -9 2>/dev/null
 fi
 
@@ -54,7 +54,7 @@ fi
 
 # Start frontend in background
 echo ""
-echo "🎨 Starting Frontend on port 3000..."
+echo "Starting Frontend on port 3000..."
 cd loop-app
 npm run dev > ../frontend.log 2>&1 &
 FRONTEND_PID=$!
@@ -67,26 +67,26 @@ sleep 5
 
 # Check if frontend is running
 if check_port 3000; then
-    echo "✅ Frontend started successfully"
+    echo "Frontend started successfully"
 else
-    echo "❌ Frontend failed to start. Check frontend.log for details."
+    echo "Frontend failed to start. Check frontend.log for details."
     kill $BACKEND_PID 2>/dev/null
     kill $FRONTEND_PID 2>/dev/null
     exit 1
 fi
 
 echo ""
-echo "🎉 Loop Quiz App is running!"
+echo "Loop Quiz App is running!"
 echo ""
-echo "📍 URLs:"
+echo "URLs:"
 echo "   Frontend: http://localhost:3000"
 echo "   Backend:  http://localhost:8787"
 echo ""
-echo "📝 Logs:"
+echo "Logs:"
 echo "   Backend:  tail -f backend.log"
 echo "   Frontend: tail -f frontend.log"
 echo ""
-echo "🛑 To stop:"
+echo "To stop:"
 echo "   kill $BACKEND_PID $FRONTEND_PID"
 echo "   or press Ctrl+C and run: killall node"
 echo ""

@@ -34,6 +34,7 @@ export type AnswerValue = number | number[] | string;
 export interface Answer {
   id: string;
   value: AnswerValue;
+  timeSpent?: number; // Time in milliseconds
 }
 
 // API response types
@@ -44,6 +45,9 @@ export interface QuizResponse {
 export interface QuestionResult {
   id: string;
   correct: boolean;
+  timeSpent?: number; // Time in milliseconds
+  userAnswer?: AnswerValue;
+  correctAnswer?: AnswerValue;
 }
 
 export interface GradeResponse {
@@ -71,6 +75,7 @@ export interface QuizState {
   total: number | null;
   results: QuestionResult[];
   error: string | null;
+  questionStartTime: number | null; // Track when current question started
 }
 
 // Quiz actions
