@@ -9,9 +9,17 @@ const app = new Hono();
 app.use(
   '*',
   cors({
-    origin: ['http://localhost:3000', 'https://loop-app.vercel.app'],
+    origin: (origin) => {
+      // Allow localhost for development
+      if (origin.startsWith('http://localhost:')) return origin;
+      // Allow all Vercel deployments
+      if (origin.endsWith('.vercel.app')) return origin;
+      // Fallback for any origin (can be restricted later)
+      return origin;
+    },
     allowMethods: ['GET', 'POST', 'OPTIONS'],
-    allowHeaders: ['Content-Type'],
+    allowHeaders: ['Content-Type', 'Accept'],
+    credentials: true,
   })
 );
 
