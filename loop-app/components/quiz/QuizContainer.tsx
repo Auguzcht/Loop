@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useQuiz } from '@/hooks/useQuiz';
 import { useQuizTimer } from '@/hooks/useQuizTimer';
@@ -13,12 +14,15 @@ import { QuizProgress } from './QuizProgress';
 import { QuizTimer } from './QuizTimer';
 import { QuestionCard } from './QuestionCard';
 import { QuizNavigation } from './QuizNavigation';
+import { CountdownOverlay } from './CountdownOverlay';
 
 export function QuizContainer() {
   const router = useRouter();
-  const { playCountdown, playEnd, playTimer, stopBackground } = useSounds();
-  const hasPlayedCountdown = useRef(false);
+  const { playCountdown, playEnd, playTimer, stopTimer, stopBackground } = useSounds();
+  const [showCountdown, setShowCountdown] = useState(false);
+  const [countdownComplete, setCountdownComplete] = useState(false);
   const hasPlayedTimerWarning = useRef(false);
+  const hasStartedTimer = useRef(false);
   const {
     state,
     startQuiz,
@@ -33,20 +37,25 @@ export function QuizContainer() {
   useEffect(() => {
     startQuiz();
     stopBackground(); // Stop landing page music
+    
+    // Cleanup: stop timer when leaving quiz page
+    return () => {
+      stopTimer();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Play countdown sound when quiz becomes active
+  // Show countdown overlay when quiz loads
   useEffect(() => {
-    if (state.status === 'active' && !hasPlayedCountdown.current) {
+    if (state.status === 'active' && !showCountdown && !countdownComplete) {
+      setShowCountdown(true);
       playCountdown();
-      hasPlayedCountdown.current = true;
     }
-  }, [state.status, playCountdown]);
+  }, [state.status, showCountdown, countdownComplete, playCountdown]);
 
-  // Handle timer
+  // Handle timer (only start after countdown)
   useQuizTimer({
-    isActive: state.status === 'active',
+    isActive: state.status === 'active' && countdownComplete,
     timeRemaining: state.timeRemaining,
     onTick: tickTimer,
     onTimeout: () => {
@@ -54,13 +63,23 @@ export function QuizContainer() {
     },
   });
 
-  // Play timer warning sound when < 10 seconds
+  // Start timer sound when countdown completes (with slight delay to sync)
   useEffect(() => {
-    if (state.status === 'active' && state.timeRemaining === 10 && !hasPlayedTimerWarning.current) {
-      playTimer();
-      hasPlayedTimerWarning.current = true;
+    if (state.status === 'active' && countdownComplete && !hasStartedTimer.current) {
+      // Delay timer sound slightly to sync with visual timer
+      setTimeout(() => {
+        playTimer();
+      }, 500);
+      hasStartedTimer.current = true;
     }
-  }, [state.timeRemaining, state.status, playTimer]);
+  }, [state.status, countdownComplete, playTimer]);
+
+  // Stop timer when quiz ends
+  useEffect(() => {
+    if (state.status === 'completed' || state.status === 'submitting') {
+      stopTimer();
+    }
+  }, [state.status, stopTimer]);
 
   // Redirect to results when completed
   useEffect(() => {
@@ -135,38 +154,67 @@ export function QuizContainer() {
     const currentQuestion = state.questions[state.currentIndex];
     const currentAnswer = state.answers.get(currentQuestion.id);
     const isLastQuestion = state.currentIndex === state.questions.length - 1;
-
     return (
       <div className="min-h-screen bg-cream-50 py-8 px-4">
-        <div className="max-w-3xl mx-auto space-y-6">
+        {/* Countdown overlay */}
+        <AnimatePresence>
+          {showCountdown && (
+            <CountdownOverlay
+              onComplete={() => {
+                setShowCountdown(false);
+                setCountdownComplete(true);
+              }}
+            />
+          )}
+        </AnimatePresence>
+
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="max-w-3xl mx-auto space-y-6"
+        >
           {/* Header with progress and timer */}
-          <div className="flex items-center justify-between">
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="flex items-center justify-between"
+          >
             <QuizProgress
               current={state.currentIndex}
               total={state.questions.length}
             />
             <QuizTimer timeRemaining={state.timeRemaining} />
-          </div>
+          </motion.div>
 
           {/* Question card */}
-          <QuestionCard
-            question={currentQuestion}
-            answer={currentAnswer}
-            onAnswer={setAnswer}
-          />
+          <AnimatePresence mode="wait">
+            <QuestionCard
+              question={currentQuestion}
+              answer={currentAnswer}
+              onAnswer={setAnswer}
+            />
+          </AnimatePresence>
 
           {/* Navigation */}
-          <QuizNavigation
-            currentIndex={state.currentIndex}
-            totalQuestions={state.questions.length}
-            onPrevious={previousQuestion}
-            onNext={nextQuestion}
-            onSubmit={submitQuizAnswers}
-            isLastQuestion={isLastQuestion}
-            canGoBack={state.currentIndex > 0}
-            canGoForward={state.currentIndex < state.questions.length - 1}
-          />
-        </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <QuizNavigation
+              currentIndex={state.currentIndex}
+              totalQuestions={state.questions.length}
+              onPrevious={previousQuestion}
+              onNext={nextQuestion}
+              onSubmit={submitQuizAnswers}
+              isLastQuestion={isLastQuestion}
+              canGoBack={state.currentIndex > 0}
+              canGoForward={state.currentIndex < state.questions.length - 1}
+            />
+          </motion.div>
+        </motion.div>
       </div>
     );
   }

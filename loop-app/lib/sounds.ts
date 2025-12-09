@@ -23,11 +23,12 @@ class SoundManager {
 
     const audio = new Audio(path);
     audio.preload = 'auto';
+    audio.muted = this.isMuted; // Apply current mute state
     
-    // Background music should loop
-    if (name === 'background') {
+    // Background music and timer should loop
+    if (name === 'background' || name === 'timer') {
       audio.loop = true;
-      audio.volume = 0.3; // Lower volume for background
+      audio.volume = name === 'background' ? 0.3 : 0.4; // Lower volume for background/timer
     } else {
       audio.volume = 0.5;
     }
@@ -36,7 +37,7 @@ class SoundManager {
   }
 
   play(soundName: string) {
-    if (this.isMuted || typeof window === 'undefined') return;
+    if (typeof window === 'undefined') return;
 
     const sound = this.sounds.get(soundName);
     if (sound) {
@@ -63,12 +64,10 @@ class SoundManager {
       localStorage.setItem('loop-sound-muted', String(this.isMuted));
     }
 
-    // Stop all sounds when muting
-    if (this.isMuted) {
-      this.sounds.forEach((sound) => {
-        sound.pause();
-      });
-    }
+    // Mute/unmute all sounds
+    this.sounds.forEach((sound) => {
+      sound.muted = this.isMuted;
+    });
 
     return this.isMuted;
   }
@@ -87,6 +86,7 @@ export function useSounds() {
   const playCountdown = () => soundManager.play('countdown');
   const playEnd = () => soundManager.play('end');
   const playTimer = () => soundManager.play('timer');
+  const stopTimer = () => soundManager.stop('timer');
   const playBackground = () => soundManager.play('background');
   const stopBackground = () => soundManager.stop('background');
   const toggleMute = () => soundManager.toggleMute();
@@ -97,6 +97,7 @@ export function useSounds() {
     playCountdown,
     playEnd,
     playTimer,
+    stopTimer,
     playBackground,
     stopBackground,
     toggleMute,

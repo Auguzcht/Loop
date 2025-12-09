@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Logo } from '@/components/shared/Logo';
@@ -43,24 +44,42 @@ export default function ResultsPage() {
 
   return (
     <div className="min-h-screen bg-cream-50 py-12 px-4">
-      <div className="max-w-2xl mx-auto space-y-8">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-2xl mx-auto space-y-8"
+      >
         {/* Logo */}
-        <div className="flex justify-center">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2 }}
+          className="flex justify-center"
+        >
           <Logo size="md" />
-        </div>
+        </motion.div>
 
         {/* Results Card */}
-        <Card className="bg-cream-100 border-2 border-cream-400 rounded-2xl p-10 text-center space-y-6">
-          {/* Trophy Icon */}
-          <div
-            className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto ${
-              passed ? 'bg-sage-100' : 'bg-amber-100'
-            }`}
-          >
-            <Trophy
-              className={`w-10 h-10 ${passed ? 'text-sage-400' : 'text-amber-600'}`}
-            />
-          </div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+        >
+          <Card className="bg-cream-100 border-2 border-cream-400 rounded-2xl p-10 text-center space-y-6">
+            {/* Trophy Icon */}
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
+              className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto ${
+                passed ? 'bg-sage-100' : 'bg-amber-100'
+              }`}
+            >
+              <Trophy
+                className={`w-10 h-10 ${passed ? 'text-sage-400' : 'text-amber-600'}`}
+              />
+            </motion.div>
 
           {/* Title */}
           <div className="space-y-2">
@@ -106,6 +125,7 @@ export default function ResultsPage() {
             )}
           </div>
         </Card>
+        </motion.div>
 
         {/* Question Breakdown */}
         <Card className="bg-cream-100 border-2 border-cream-400 rounded-2xl p-8">
@@ -134,9 +154,14 @@ export default function ResultsPage() {
         </Card>
 
         {/* Actions */}
-        <div className="flex flex-col sm:flex-row gap-4">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="flex flex-col sm:flex-row gap-4"
+        >
           <Link href="/quiz" className="flex-1">
-            <Button className="w-full bg-terracotta-300 hover:bg-terracotta-400 text-white px-8 py-6 rounded-xl font-medium transition-all hover:shadow-lg">
+            <Button className="w-full bg-terracotta-300 hover:bg-terracotta-400 text-white px-8 py-6 rounded-xl font-medium transition-all hover:shadow-lg hover:scale-105">
               <RotateCw className="w-5 h-5 mr-2" />
               Try Again
             </Button>
@@ -144,14 +169,14 @@ export default function ResultsPage() {
           <Link href="/" className="flex-1">
             <Button
               variant="outline"
-              className="w-full bg-cream-200 hover:bg-cream-300 text-brown-500 border-2 border-cream-400 px-8 py-6 rounded-xl font-medium transition-all"
+              className="w-full bg-cream-200 hover:bg-cream-300 text-brown-500 border-2 border-cream-400 px-8 py-6 rounded-xl font-medium transition-all hover:scale-105"
             >
               <Home className="w-5 h-5 mr-2" />
               Go Home
             </Button>
           </Link>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo, Tagline } from '@/components/shared/Logo';
@@ -21,17 +22,32 @@ export default function Home() {
   }, [playBackground, stopBackground]);
   return (
     <div className="min-h-screen bg-cream-50 flex items-center justify-center p-4">
-      <main className="w-full max-w-2xl text-center space-y-12">
+      <motion.main 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="w-full max-w-2xl text-center space-y-12"
+      >
         {/* Logo and Tagline */}
-        <div className="space-y-4">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          className="space-y-4"
+        >
           <div className="flex justify-center">
             <Logo size="lg" />
           </div>
           <Tagline />
-        </div>
+        </motion.div>
 
         {/* Welcome Message */}
-        <div className="space-y-4">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+          className="space-y-4"
+        >
           <h2 className="text-3xl font-medium text-brown-500">
             Test Your Knowledge
           </h2>
@@ -39,10 +55,15 @@ export default function Home() {
             Challenge yourself with 12 questions covering web development,
             programming, and technology. You'll have 60 seconds to complete the quiz.
           </p>
-        </div>
+        </motion.div>
 
         {/* Features */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-4"
+        >
           <div className="bg-cream-100 border-2 border-cream-400 rounded-2xl p-6 space-y-3">
             <div className="w-12 h-12 rounded-full bg-terracotta-100 flex items-center justify-center mx-auto">
               <ListChecks className="w-6 h-6 text-terracotta-400" />
@@ -72,28 +93,37 @@ export default function Home() {
               See your score immediately after
             </p>
           </div>
-        </div>
+        </motion.div>
 
         {/* Start Button */}
-        <div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.8, duration: 0.5 }}
+        >
           <Link href="/quiz">
             <Button 
               onClick={() => playBackground()}
-              className="bg-terracotta-300 hover:bg-terracotta-400 text-white px-12 py-7 rounded-xl text-lg font-medium transition-all hover:shadow-lg"
+              className="bg-terracotta-300 hover:bg-terracotta-400 text-white px-12 py-7 rounded-xl text-lg font-medium transition-all hover:shadow-lg hover:scale-105"
             >
               Start Quiz
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
           </Link>
-        </div>
+        </motion.div>
 
         {/* Instructions */}
-        <div className="text-sm text-brown-300 space-y-2">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1, duration: 0.5 }}
+          className="text-sm text-brown-300 space-y-2"
+        >
           <p>• Answer all questions before time runs out</p>
           <p>• You can navigate between questions</p>
           <p>• Submit your answers when you're ready</p>
-        </div>
-      </main>
+        </motion.div>
+      </motion.main>
     </div>
   );
 }
