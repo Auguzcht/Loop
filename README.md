@@ -1,151 +1,207 @@
-# Loop
-
-> A modern full-stack quiz application demonstrating iteration through knowledge
-
-**Stay in the loop** - Learn. Test. Loop.
-
-[![Live Demo](https://img.shields.io/badge/demo-live-terracotta)](https://loop-quiz.vercel.app)
-[![API](https://img.shields.io/badge/api-cloudflare-orange)](https://loop-api.workers.dev)
-
----
-
-## 🎯 About Loop
-
-Loop is a full-stack quiz platform built for the Enrolla coding challenge. The name reflects both the programming concept of iteration (looping through questions) and the continuous learning cycle - test, review, improve, repeat.
-
-Just like a `for` loop iterates through an array, Loop guides you through knowledge assessment one question at a time.
-
-### 🎨 Design Philosophy
-
-- **Warm & Welcoming**: Cream/beige palette creates an approachable learning environment
-- **Developer-Focused**: Clean, minimal interface that developers will appreciate
-- **Smooth Interactions**: Every click, transition, and state change is thoughtfully animated
+<div align="center">
+  <img src="https://github.com/Auguzcht/Loop/blob/main/loop-app/public/loop-logo.svg" alt="Loop Logo" width="400"/>
+  
+  <h1>Loop</h1>
+  
+  > Stay in the loop - Learn. Test. Loop.
+  
+  [![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org)
+  [![Hono](https://img.shields.io/badge/Hono-4.10-orange)](https://hono.dev)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org)
+  [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-f38020)](https://workers.cloudflare.com)
+  [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8)](https://tailwindcss.com)
+</div>
 
 ---
 
-## ✨ Features
+## 🎯 About
 
-- **3 Question Types**: Radio (single choice), Checkbox (multiple choice), Text (short answer)
-- **Timed Quiz**: 60-second countdown per question with visual warnings
-- **Smart State Management**: Custom hooks with useReducer for predictable state
-- **Responsive Design**: Seamless experience from mobile to desktop
-- **Accessibility First**: Keyboard navigation, ARIA labels, high contrast
-- **Type-Safe**: Full TypeScript coverage with Zod validation
-- **Edge Runtime**: Lightning-fast with Cloudflare Workers + Vercel Edge
+A full-stack quiz application where every detail matters. Loop isn't just about answering questions - it's about the complete learning cycle, beautifully executed.
+
+### 💡 The Name
+
+"Loop" is intentionally layered with meaning:
+
+**For Developers:**
+- **Programming loops** - Iteration through questions (`for`, `while`, `.forEach()`)
+- **Event loop** - Continuous, non-blocking learning process
+- **Feedback loop** - Test → Review → Improve → Repeat
+
+**For Users:**
+- **Stay in the loop** - Engaged, informed, connected
+- **Loop back** - Review wrong answers, retry quiz
+- **In the loop** - Part of the learning community
+
+The name works on every level. When you hear "Loop," you immediately understand it's both technical and approachable.
 
 ---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ 
-- npm or pnpm
+- Node.js 18+
+- npm/pnpm
 
-### Backend (Hono API)
+### 📦 Installation & Development
+
+**API (Cloudflare Workers)**
 ```bash
-cd backend
+cd loop-api
 npm install
-npm run dev        # Local development
+npm run dev        # Local at http://localhost:8787
 npm run deploy     # Deploy to Cloudflare Workers
+npm test          # Run test suite (52 tests)
 ```
 
-API will be available at `http://localhost:8787`
-
-### Frontend (Next.js)
+**Frontend (Next.js)**
 ```bash
-cd frontend
+cd loop-app
 npm install
-npm run dev        # Local development at http://localhost:3000
+npm run dev        # Local at http://localhost:3000
 npm run build      # Production build
+npm start         # Serve production build
 ```
 
-Set environment variable:
+**Environment Variables**
 ```bash
-NEXT_PUBLIC_API_URL=https://loop-api.workers.dev
+# loop-app/.env.local
+NEXT_PUBLIC_API_URL=https://loop-api.loop-api.workers.dev
 ```
 
 ---
 
 ## 🏗️ Architecture
 
-### Tech Stack
+### 🎨 Design Philosophy
 
-**Backend**
-- **Runtime**: Cloudflare Workers (Edge)
-- **Framework**: Hono (lightweight, fast)
-- **Validation**: Zod (type-safe schemas)
+**Inspired by Gizmo AI** - Clean, conversational interface that puts content first
 
-**Frontend**
-- **Framework**: Next.js 15 (App Router)
-- **Styling**: TailwindCSS + shadcn/ui
-- **Font**: Montserrat (Google Fonts)
-- **State**: React hooks (useReducer + Context)
-- **Icons**: Lucide React
+**Retro Color Palette** - Monokai/Claude-inspired warmth:
+- Cream background (#FAF8F5) - Easy on the eyes
+- Terracotta accent (#C67750) - Warm, inviting
+- Sage success (#90B494) - Gentle feedback
+- Brown text (#5C4A3A) - High contrast without harshness
 
-### Key Design Decisions
+The result? A familiar, comforting aesthetic that developers recognize and users enjoy.
 
-**Why useReducer over useState?**
-Quiz state has complex transitions (loading → active → submitting → completed). A reducer centralizes this logic and makes state changes predictable and testable.
+### ⚙️ Tech Stack
 
-**Why custom hooks over Zustand?**
-For this scope, React's built-in patterns are sufficient. Custom hooks (`useQuiz`, `useQuizTimer`) keep code clean while demonstrating deep React knowledge.
+**Backend - Hono on Cloudflare Workers**
+- **Why Edge?** Zero cold starts, global distribution, sub-50ms responses
+- **Why Hono?** Lightweight (12kb), Express-like DX, built for edge runtimes
+- **Why not Express?** Too heavy for edge, slower startup times
 
-**Why Zod validation?**
-Type-safe validation at the API boundary prevents runtime errors and provides excellent DX with TypeScript inference.
+**Frontend - Next.js 15 App Router**
+- **Why App Router?** Better data fetching patterns, React Server Components ready
+- **Why Next.js?** Production-ready, excellent DX, Vercel deployment
+- **React 19** - Latest features with React Compiler enabled
 
-**Why Edge runtime?**
-Zero cold starts, global distribution, and instant responses. Perfect for a quiz app where speed matters.
+**Styling - Tailwind CSS v4 + shadcn/ui**
+- **Why Tailwind v4?** CSS-first, faster builds, better DX
+- **Why shadcn?** Copy-paste components, full control, no bloat
+- **Framer Motion** - 60fps animations that feel native
+
+**Validation - Zod**
+- Type-safe schemas with TypeScript inference
+- Runtime validation at API boundaries
+- Single source of truth for types
+
+**State Management - Custom React Hooks**
+- `useReducer` for complex quiz state
+- No external state library needed for this scope
+- Predictable, testable state transitions
+
+### 🎯 Key Architecture Decisions
+
+**Node.js vs Edge Runtime?**
+Edge wins for this use case - quiz responses need to be instant. Cloudflare Workers deploy globally in seconds, no cold starts, and handle spikes effortlessly.
+
+**App Router vs Pages Router?**
+App Router. Better patterns for data fetching, cleaner file structure, and we're building for the future. The learning curve was worth it.
+
+**Custom Hooks vs Zustand/Redux?**
+Custom hooks. For a quiz app, React's built-in patterns are perfect. `useReducer` handles complex state, `useContext` shares it. Adding Zustand would be overengineering.
+
+**Monorepo vs Separate Repos?**
+Separate deployment targets (Cloudflare Workers + Vercel) make a monorepo unnecessary. Independent repos keep things simple.
+
+### 📚 Libraries & Rationale
+
+**Production Dependencies:**
+- `hono` - Fast, lightweight edge framework
+- `zod` - Runtime type safety
+- `next` - React meta-framework
+- `framer-motion` - Silky smooth animations
+- `recharts` - Beautiful, accessible charts
+- `lucide-react` - Consistent icon system
+- `tailwindcss` - Utility-first styling
+
+**Development Tools:**
+- `typescript` - Type safety everywhere
+- `jest` + `ts-jest` - 52 tests for grading logic
+- `eslint` + `prettier` - Code quality
+- `wrangler` - Cloudflare deployment
+
+**Why these and not alternatives?**
+Every library serves a clear purpose. No bloat, no "just in case" dependencies. shadcn/ui components are copied into the project, so we control every line of code.
+
+---
+
+## ✨ Features
+
+**Core Functionality:**
+- 3 question types (radio, checkbox, text)
+- Deterministic shuffling per session
+- Time tracking per question
+- Instant grading with detailed feedback
+- 3D flip cards for answer review
+
+**UX Polish:**
+- Magnetic button effects
+- Smooth page transitions
+- Dynamic gradient backgrounds
+- Sound effects (toggle-able)
+- Loading states everywhere
+- Responsive across all devices
+
+**Developer Experience:**
+- Full TypeScript coverage
+- Comprehensive test suite
+- Hot reload (frontend & backend)
+- Type-safe API contracts
+- Zero runtime errors (Zod validates everything)
 
 ---
 
 ## 🎨 Design System
 
 ### Color Palette
-- **Background**: Warm cream (#FFFBED)
-- **Accent**: Terracotta (#D4845C)
-- **Text**: Deep brown (#2D2A26)
-- **Success**: Sage green (#7BA862)
-- **Error**: Warm red (#C85D5D)
+```css
+--cream-50:     #FAF8F5;  /* Background */
+--cream-400:    #E5D5C3;  /* Borders */
+--terracotta:   #C67750;  /* Primary accent */
+--sage:         #90B494;  /* Success */
+--brown-500:    #5C4A3A;  /* Headings */
+--brown-400:    #8B7355;  /* Body text */
+```
 
 ### Typography
-- **Font**: Montserrat Light (300) for headings
-- **Tagline**: "Stay in the loop"
-
-See full design system in `DESIGN.md`
-
----
-
-## 📁 Project Structure
-```
-loop/
-├── backend/
-│   ├── src/
-│   │   ├── index.ts          # Hono app entry
-│   │   ├── routes/           # API routes
-│   │   ├── data/             # Mock questions
-│   │   ├── schemas/          # Zod schemas
-│   │   └── utils/            # Grading logic
-│   └── wrangler.toml         # Cloudflare config
-│
-└── frontend/
-    ├── src/
-    │   ├── app/              # Next.js pages
-    │   ├── components/       # React components
-    │   │   ├── ui/          # shadcn components
-    │   │   └── quiz/        # Custom quiz components
-    │   ├── hooks/           # Custom hooks
-    │   ├── lib/             # Utilities
-    │   └── types/           # TypeScript types
-    └── tailwind.config.ts   # Tailwind + custom colors
-```
+- **Font:** Inter (system fallback)
+- **Headings:** 600 weight
+- **Body:** 400 weight
+- **Scale:** Tailwind's default type scale
 
 ---
 
-## 🧪 API Documentation
+## 🧪 API Reference
 
-### GET `/api/quiz`
+### `GET /api/quiz`
 
-Returns 12 quiz questions.
+Fetch quiz questions with optional deterministic shuffling.
+
+**Query Parameters:**
+- `shuffle` - Set to `true` to enable shuffling
+- `session_id` - Unique session identifier for deterministic results
 
 **Response:**
 ```json
@@ -154,26 +210,25 @@ Returns 12 quiz questions.
     {
       "id": "q1",
       "type": "radio",
-      "question": "Which HTTP status code indicates success?",
-      "choices": ["200", "404", "500"],
-      "correctIndex": 0
+      "question": "What does API stand for?",
+      "choices": ["...", "...", "..."],
+      "correctIndex": 1
     }
   ]
 }
 ```
 
-### POST `/api/grade`
+### `POST /api/grade`
 
-Grades quiz answers.
+Grade user answers and return detailed results.
 
 **Request:**
 ```json
 {
   "answers": [
-    { "id": "q1", "value": 0 },
-    { "id": "q2", "value": [0, 2] },
-    { "id": "q3", "value": "Next.js" }
-  ]
+    { "id": "q1", "value": 1, "timeSpent": 5432 }
+  ],
+  "session_id": "session-123-abc"
 }
 ```
 
@@ -183,101 +238,96 @@ Grades quiz answers.
   "score": 10,
   "total": 12,
   "results": [
-    { "id": "q1", "correct": true },
-    { "id": "q2", "correct": false }
+    {
+      "id": "q1",
+      "correct": true,
+      "timeSpent": 5432,
+      "userAnswer": 1,
+      "correctAnswer": 1
+    }
   ]
 }
 ```
 
 ---
 
-## 🎁 Bonus Features
+## 🎯 Trade-offs & Decisions
 
-### 1. Timed Quiz ⏱️
-Each question has a 60-second countdown. Timer changes color based on remaining time:
-- Green (>20s) → Amber (10-20s) → Red (<10s, pulsing)
+### What We Didn't Compromise On
 
-Auto-submits question when time expires.
+**Type Safety** - Full TypeScript coverage with strict mode. Zod validates everything at runtime.
 
-### 2. Custom State Management 🎯
-Built a custom state management solution using `useReducer` with these benefits:
-- Centralized state logic
-- Predictable state transitions
-- Easy to test and debug
-- No external dependencies
+**User Experience** - Every interaction is animated. Every state change has feedback. No jarring transitions.
 
-Implementation in `hooks/useQuiz.ts`:
-```typescript
-type QuizAction = 
-  | { type: 'LOAD_QUESTIONS'; payload: Question[] }
-  | { type: 'ANSWER_QUESTION'; payload: Answer }
-  | { type: 'NEXT_QUESTION' }
-  | { type: 'SUBMIT_QUIZ' }
-  | { type: 'TIMEOUT' }
-```
+**Code Quality** - Clean, readable code. Comprehensive test suite. No "TODO" comments in production.
 
----
+**Performance** - Edge runtime, optimized bundle sizes, lazy loading where it makes sense.
 
-## 🎯 Trade-offs & Future Improvements
+### Pragmatic Choices
 
-### Shortcuts Taken
-- **Mock data only** - Used hardcoded questions instead of a database
-- **No authentication** - Anyone can take the quiz
-- **Simple grading** - Text answers use exact string matching (case-insensitive)
-- **No progress persistence** - Refresh loses quiz state
+**Component Libraries** - Used shadcn/ui to accelerate development. Why reinvent radio buttons? Copy-paste components give us full control without the boilerplate.
 
-### With More Time, I'd Add:
-- **Question bank** - Dynamic question selection from larger pool
-- **Difficulty levels** - Easy/Medium/Hard questions
-- **Categories** - Filter by topic (JavaScript, React, CSS, etc.)
-- **Leaderboard** - Global/daily high scores
-- **Social sharing** - Share results with friends
-- **Analytics** - Track question difficulty, common mistakes
-- **Improved text grading** - Fuzzy matching, keyword detection
-- **Quiz history** - See past attempts and progress over time
+**Mock Data** - Hardcoded 12 questions instead of building a database. For this scope, a database adds complexity without value.
+
+**Simple Text Matching** - Text answers use case-insensitive exact matching. Fuzzy matching or NLP would be overkill here.
+
+**No Authentication** - Anyone can take the quiz. Adding auth would shift focus from the core experience.
+
+**Session Storage** - Quiz state lives in sessionStorage. It's simple, works offline, and perfect for single-session quizzes.
+
+### What I'd Add With More Time
+
+**Question Bank** - Dynamic selection from hundreds of questions across categories
+
+**Difficulty Tiers** - Easy/Medium/Hard modes with adaptive questioning
+
+**Better Analytics** - Question difficulty heatmaps, common mistake patterns
+
+**Social Features** - Leaderboards, shareable result cards
+
+**Progress Persistence** - Save quiz state to resume later
+
+**Admin Dashboard** - CRUD operations for questions without code changes
 
 ---
 
-## ⏱️ Time Spent
+## ⏱️ Time Investment
 
-**Total**: ~16 hours
+**Total: ~17 hours**
 
-- Planning & Setup: 2 hours
-- Backend (Hono + Validation): 3 hours
-- Frontend Core (Components + State): 5 hours
-- UI Polish & Animations: 3 hours
-- Timer Implementation: 2 hours
-- Testing & Deployment: 1 hour
+**Planning & Assets (4 hours)**
+- Concept ideation and naming
+- Logo design iterations
+- Color palette exploration
+- Sound effect creation (with Claude & Gemini)
+- UX flow mapping
 
----
+**Development (12 hours)**
+- Backend setup + API design: 2h
+- Frontend core components: 4h
+- State management & hooks: 2h
+- Animations & polish: 2h
+- Testing & bug fixes: 2h
 
-## 🎬 Demo Video
+**Optimization (1 hour)**
+- SEO implementation
+- Performance tuning
+- Accessibility audit
 
-[📹 Watch 5-minute walkthrough](https://www.loom.com/share/your-video-id)
-
-Covers:
-- Live quiz demo with all question types
-- Timer functionality and auto-submit
-- Code architecture walkthrough
-- State management explanation
-- Trade-offs and future improvements
-
----
-
-## 🙏 Acknowledgments
-
-Built for the **Enrolla Full-Stack Developer Challenge**
-
-- Design inspired by warm, approachable learning platforms
-- Name "Loop" reflects both programming iteration and continuous learning
-- Montserrat font chosen for its clean, modern aesthetic
+This wasn't rushed. Every component was considered, every animation tweaked. Quality takes time.
 
 ---
 
 ## 📝 License
 
-MIT © Alfred Nodado (2025)
+MIT © 2025
 
 ---
 
-**Loop** - Because learning is an iteration, not a destination. Stay in the loop. 🔄
+<div align="center">
+  
+  **Loop** - Because learning is iteration, not destination.
+  
+  <p><strong>Built with ❤️ by Alfred Nodado</strong></p>
+  
+</div>
