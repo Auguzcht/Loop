@@ -1,0 +1,32 @@
+/* Background & Base */
+--bg-primary: #FFFBED;      /* Warm cream - main background */
+--bg-secondary: #FFF8DC;    /* Lighter cream - cards */
+--bg-tertiary: #F5ECD7;     /* Slightly darker - hover states */
+
+/* Text Colors */
+--text-primary: #2D2A26;    /* Deep warm brown - main text */
+--text-secondary: #5C574F;  /* Medium brown - secondary text */
+--text-muted: #8B8378;      /* Light brown - muted text */
+
+/* Accent Colors (Warm Tones) */
+--accent-primary: #D4845C;  /* Warm terracotta - primary actions */
+--accent-hover: #C67750;    /* Darker terracotta - hover */
+--accent-light: #E8B69A;    /* Light terracotta - subtle highlights */
+
+/* Success/Error/Warning (Warm Palette) */
+--success: #7BA862;         /* Muted sage green - correct */
+--success-light: #A8C99A;   /* Light sage */
+--error: #C85D5D;           /* Muted warm red - incorrect */
+--error-light: #E08B8B;     /* Light warm red */
+--warning: #D4A84C;         /* Golden amber - timer warning */
+--warning-light: #E8C87A;   /* Light amber */
+
+/* Borders & Dividers */
+--border-light: #E8DCC8;    /* Light warm border */
+--border-default: #D4C7AF;  /* Default border */
+--border-dark: #B8A890;     /* Darker border */
+
+/* Timer States (Warm) */
+--timer-safe: #7BA862;      /* Sage green (>20s) */
+--timer-caution: #D4A84C;   /* Amber (10-20s) */
+--timer-danger: #C85D5D;    /* Warm red (<10s) */
