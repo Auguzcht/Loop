@@ -59,6 +59,7 @@ export const AnalyticsSection = forwardRef<HTMLDivElement, AnalyticsSectionProps
           {/* Time Chart */}
           <TimeChart
             results={results}
+            questions={questions}
             isInView={isInView}
           />
 
@@ -82,7 +83,11 @@ export const AnalyticsSection = forwardRef<HTMLDivElement, AnalyticsSectionProps
           )}
 
           {/* Question Grid */}
-          <QuestionGrid results={results} isInView={isInView} />
+          <QuestionGrid 
+            results={results} 
+            questions={questions}
+            isInView={isInView} 
+          />
 
           {/* Back to Top */}
           <motion.div

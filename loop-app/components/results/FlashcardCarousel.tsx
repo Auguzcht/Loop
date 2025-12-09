@@ -17,8 +17,15 @@ export function FlashcardCarousel({ results, questions, isInView }: FlashcardCar
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
 
-  const currentQuestion = questions[currentIndex];
-  const currentResult = results[currentIndex];
+  // Match results with questions by ID to preserve correct order
+  const matchedData = questions.map(question => {
+    const result = results.find(r => r.id === question.id);
+    return { question, result };
+  });
+
+  const currentData = matchedData[currentIndex];
+  const currentQuestion = currentData?.question;
+  const currentResult = currentData?.result;
 
   const handleNext = () => {
     setIsFlipped(false);
@@ -71,8 +78,10 @@ export function FlashcardCarousel({ results, questions, isInView }: FlashcardCar
       {/* Flashcard */}
       <div className="relative h-[400px] perspective-1000">
         <motion.div
+          key={currentIndex}
           className="w-full h-full cursor-pointer"
           onClick={handleFlip}
+          initial={{ rotateY: 0 }}
           animate={{ rotateY: isFlipped ? 180 : 0 }}
           transition={{ duration: 0.6, type: 'spring', stiffness: 100, damping: 15 }}
           style={{ transformStyle: 'preserve-3d' }}

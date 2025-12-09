@@ -14,6 +14,7 @@ export const AnswerSchema = z.object({
 // Grade request schema - allow 0 to 12 answers
 export const GradeRequestSchema = z.object({
   answers: z.array(AnswerSchema).min(0).max(12),
+  session_id: z.string().optional(), // For deterministic shuffle matching
 });
 
 // Export TypeScript types

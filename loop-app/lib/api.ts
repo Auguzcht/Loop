@@ -54,7 +54,15 @@ function generateSessionId(): string {
  */
 export async function submitQuiz(answers: Answer[]): Promise<GradeResponse> {
   try {
-    const payload = { answers };
+    // Get session_id if it exists
+    const sessionId = typeof window !== 'undefined' 
+      ? sessionStorage.getItem('sessionId') 
+      : null;
+    
+    const payload = { 
+      answers,
+      ...(sessionId && { session_id: sessionId })
+    };
     console.log('Submitting quiz with payload:', payload);
 
     const response = await fetch(`${API_BASE_URL}/api/grade`, {

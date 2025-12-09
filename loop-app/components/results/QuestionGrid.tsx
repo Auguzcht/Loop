@@ -7,10 +7,21 @@ import type { QuestionResult } from '@/types/quiz';
 
 interface QuestionGridProps {
   results: QuestionResult[];
+  questions: any[];
   isInView: boolean;
 }
 
-export function QuestionGrid({ results, isInView }: QuestionGridProps) {
+export function QuestionGrid({ results, questions, isInView }: QuestionGridProps) {
+  // Match results with questions by ID to preserve display order
+  const matchedResults = questions.map((question, index) => {
+    const result = results.find(r => r.id === question.id);
+    return {
+      id: question.id,
+      correct: result?.correct || false,
+      displayIndex: index + 1,
+    };
+  });
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 50 }}
@@ -27,7 +38,7 @@ export function QuestionGrid({ results, isInView }: QuestionGridProps) {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-12 gap-3">
-            {results.map((result, index) => (
+            {matchedResults.map((result, index) => (
               <motion.div
                 key={result.id}
                 initial={{ opacity: 0, scale: 0 }}
@@ -39,14 +50,14 @@ export function QuestionGrid({ results, isInView }: QuestionGridProps) {
                     ? 'bg-sage-100 text-sage-400'
                     : 'bg-red-100 text-red-400'
                 }`}
-                title={`Question ${index + 1}: ${result.correct ? 'Correct' : 'Incorrect'}`}
+                title={`Question ${result.displayIndex}: ${result.correct ? 'Correct' : 'Incorrect'}`}
               >
                 {result.correct ? (
                   <CheckCircle2 className="w-5 h-5" />
                 ) : (
                   <XCircle className="w-5 h-5" />
                 )}
-                <span className="text-xs mt-1">Q{index + 1}</span>
+                <span className="text-xs mt-1">Q{result.displayIndex}</span>
               </motion.div>
             ))}
           </div>

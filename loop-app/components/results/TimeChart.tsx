@@ -8,17 +8,22 @@ import type { QuestionResult } from '@/types/quiz';
 
 interface TimeChartProps {
   results: QuestionResult[];
+  questions: any[];
   isInView: boolean;
 }
 
-export function TimeChart({ results, isInView }: TimeChartProps) {
-  // Prepare data for the chart
-  const chartData = results
-    .map((result, index) => ({
-      question: `Q${index + 1}`,
-      time: result.timeSpent ? Math.round(result.timeSpent / 1000) : 0, // Convert to seconds
-      correct: result.correct,
-    }))
+export function TimeChart({ results, questions, isInView }: TimeChartProps) {
+  // Match results with questions by ID to preserve display order
+  const chartData = questions
+    .map((question, index) => {
+      const result = results.find(r => r.id === question.id);
+      return {
+        id: question.id,
+        question: `Q${index + 1}`,
+        time: result?.timeSpent ? Math.round(result.timeSpent / 1000) : 0,
+        correct: result?.correct || false,
+      };
+    })
     .filter(item => item.time > 0); // Only show questions with time data
 
   // If no time data, show message
