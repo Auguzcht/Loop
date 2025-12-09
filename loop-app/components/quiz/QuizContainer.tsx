@@ -18,7 +18,7 @@ import { CountdownOverlay } from './CountdownOverlay';
 
 export function QuizContainer() {
   const router = useRouter();
-  const { playCountdown, playEnd, playTimer, stopTimer, stopBackground } = useSounds();
+  const { playCountdown, playEnd, playTimer, stopTimer } = useSounds();
   const [showCountdown, setShowCountdown] = useState(false);
   const [countdownComplete, setCountdownComplete] = useState(false);
   const hasPlayedTimerWarning = useRef(false);
@@ -36,7 +36,7 @@ export function QuizContainer() {
   // Load quiz on mount
   useEffect(() => {
     startQuiz();
-    stopBackground(); // Stop landing page music
+    // DON'T stop background music here - let it fade out from QuizPage
     
     // Cleanup: stop timer when leaving quiz page
     return () => {

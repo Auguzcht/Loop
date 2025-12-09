@@ -1,32 +1,66 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo, Tagline } from '@/components/shared/Logo';
+import { LoadingScreen } from '@/components/shared/LoadingScreen';
 import { ArrowRight, Clock, ListChecks, Trophy } from 'lucide-react';
 import { useSounds } from '@/lib/sounds';
+import { Particles } from '@/components/ui/particles';
 
 export default function Home() {
   const { playBackground, stopBackground } = useSounds();
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // Check if this is a hard refresh (navigation type is reload)
+    const isHardRefresh = typeof performance !== 'undefined' && 
+      performance.getEntriesByType('navigation')[0]?.type === 'reload';
+    
+    if (isHardRefresh) {
+      setIsLoading(true);
+      const timer = setTimeout(() => setIsLoading(false), 2500);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   useEffect(() => {
     // Play background music when landing page loads
-    playBackground();
+    // Use a slight delay to ensure audio context is ready
+    const musicTimer = setTimeout(() => {
+      playBackground();
+    }, 100);
 
-    // Stop when component unmounts
+    // DON'T stop when component unmounts - let it play through loading screen
     return () => {
-      stopBackground();
+      clearTimeout(musicTimer);
     };
-  }, [playBackground, stopBackground]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
   return (
-    <div className="min-h-screen bg-cream-50 flex items-center justify-center p-4">
+    <div className="relative min-h-screen bg-cream-50 flex items-center justify-center p-4 overflow-hidden">
+      {/* Particles background */}
+      <Particles
+        className="absolute inset-0"
+        quantity={150}
+        ease={80}
+        color="#D4845C"
+        size={0.8}
+        refresh
+      />
+      
       <motion.main 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="w-full max-w-2xl text-center space-y-12"
+        className="relative z-10 w-full max-w-2xl text-center space-y-12"
       >
         {/* Logo and Tagline */}
         <motion.div 
@@ -36,7 +70,7 @@ export default function Home() {
           className="space-y-4"
         >
           <div className="flex justify-center">
-            <Logo size="lg" />
+            <Logo size="xxl" />
           </div>
           <Tagline />
         </motion.div>
@@ -46,52 +80,34 @@ export default function Home() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4, duration: 0.5 }}
-          className="space-y-4"
+          className="space-y-6"
         >
-          <h2 className="text-3xl font-medium text-brown-500">
+          <h2 className="text-4xl md:text-5xl font-medium text-brown-500">
             Test Your Knowledge
           </h2>
-          <p className="text-lg text-brown-400 max-w-xl mx-auto leading-relaxed">
-            Challenge yourself with 12 questions covering web development,
-            programming, and technology. You'll have 60 seconds to complete the quiz.
+          <p className="text-xl text-brown-400 max-w-2xl mx-auto leading-relaxed">
+            12 questions • 60 seconds • Instant results
           </p>
         </motion.div>
 
-        {/* Features */}
+        {/* Features - Compact inline design */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.5 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-4"
+          className="flex flex-wrap items-center justify-center gap-8 text-brown-400"
         >
-          <div className="bg-cream-100 border-2 border-cream-400 rounded-2xl p-6 space-y-3">
-            <div className="w-12 h-12 rounded-full bg-terracotta-100 flex items-center justify-center mx-auto">
-              <ListChecks className="w-6 h-6 text-terracotta-400" />
-            </div>
-            <h3 className="font-medium text-brown-500">12 Questions</h3>
-            <p className="text-sm text-brown-400">
-              Multiple choice, checkboxes, and text answers
-            </p>
+          <div className="flex items-center gap-2">
+            <ListChecks className="w-5 h-5 text-terracotta-400" />
+            <span className="text-sm font-medium">Mixed Question Types</span>
           </div>
-
-          <div className="bg-cream-100 border-2 border-cream-400 rounded-2xl p-6 space-y-3">
-            <div className="w-12 h-12 rounded-full bg-terracotta-100 flex items-center justify-center mx-auto">
-              <Clock className="w-6 h-6 text-terracotta-400" />
-            </div>
-            <h3 className="font-medium text-brown-500">60 Seconds</h3>
-            <p className="text-sm text-brown-400">
-              Beat the clock and test your speed
-            </p>
+          <div className="flex items-center gap-2">
+            <Clock className="w-5 h-5 text-terracotta-400" />
+            <span className="text-sm font-medium">Timed Challenge</span>
           </div>
-
-          <div className="bg-cream-100 border-2 border-cream-400 rounded-2xl p-6 space-y-3">
-            <div className="w-12 h-12 rounded-full bg-terracotta-100 flex items-center justify-center mx-auto">
-              <Trophy className="w-6 h-6 text-terracotta-400" />
-            </div>
-            <h3 className="font-medium text-brown-500">Instant Results</h3>
-            <p className="text-sm text-brown-400">
-              See your score immediately after
-            </p>
+          <div className="flex items-center gap-2">
+            <Trophy className="w-5 h-5 text-terracotta-400" />
+            <span className="text-sm font-medium">Track Your Score</span>
           </div>
         </motion.div>
 
@@ -103,25 +119,18 @@ export default function Home() {
         >
           <Link href="/quiz">
             <Button 
-              onClick={() => playBackground()}
-              className="bg-terracotta-300 hover:bg-terracotta-400 text-white px-12 py-7 rounded-xl text-lg font-medium transition-all hover:shadow-lg hover:scale-105"
+              onClick={() => {
+                // Don't restart music, just set navigation flag
+                if (typeof sessionStorage !== 'undefined') {
+                  sessionStorage.setItem('navigatingToQuiz', 'true');
+                }
+              }}
+              className="bg-terracotta-300 hover:bg-terracotta-400 text-white px-16 py-8 rounded-2xl text-xl font-medium transition-all hover:shadow-2xl hover:shadow-terracotta-200/50 hover:scale-105"
             >
               Start Quiz
-              <ArrowRight className="w-5 h-5 ml-2" />
+              <ArrowRight className="w-6 h-6 ml-3" />
             </Button>
           </Link>
-        </motion.div>
-
-        {/* Instructions */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 0.5 }}
-          className="text-sm text-brown-300 space-y-2"
-        >
-          <p>• Answer all questions before time runs out</p>
-          <p>• You can navigate between questions</p>
-          <p>• Submit your answers when you're ready</p>
         </motion.div>
       </motion.main>
     </div>

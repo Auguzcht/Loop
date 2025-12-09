@@ -2,6 +2,8 @@
 class SoundManager {
   private sounds: Map<string, HTMLAudioElement> = new Map();
   private isMuted: boolean = false;
+  private hasInteracted: boolean = false;
+  private pendingBackgroundPlay: boolean = false;
 
   constructor() {
     if (typeof window !== 'undefined') {
@@ -15,7 +17,33 @@ class SoundManager {
       // Check if user prefers muted
       const savedMutedState = localStorage.getItem('loop-sound-muted');
       this.isMuted = savedMutedState === 'true';
+
+      // Set up user interaction listeners to enable autoplay
+      this.setupInteractionListeners();
     }
+  }
+
+  private setupInteractionListeners() {
+    if (typeof window === 'undefined') return;
+
+    const enableAudio = () => {
+      this.hasInteracted = true;
+      
+      // If background music was pending, play it now
+      if (this.pendingBackgroundPlay) {
+        this.play('background');
+        this.pendingBackgroundPlay = false;
+      }
+
+      // Remove listeners after first interaction
+      document.removeEventListener('click', enableAudio);
+      document.removeEventListener('touchstart', enableAudio);
+      document.removeEventListener('keydown', enableAudio);
+    };
+
+    document.addEventListener('click', enableAudio);
+    document.addEventListener('touchstart', enableAudio);
+    document.addEventListener('keydown', enableAudio);
   }
 
   private loadSound(name: string, path: string) {
@@ -44,7 +72,13 @@ class SoundManager {
       // Reset to start if already playing
       sound.currentTime = 0;
       sound.play().catch((err) => {
-        console.log('Sound play failed:', err);
+        console.log('Sound play failed (autoplay blocked):', err);
+        
+        // If it's background music and autoplay is blocked, mark as pending
+        if (soundName === 'background' && !this.hasInteracted) {
+          this.pendingBackgroundPlay = true;
+          console.log('Background music will play after user interaction');
+        }
       });
     }
   }
@@ -54,6 +88,31 @@ class SoundManager {
     if (sound) {
       sound.pause();
       sound.currentTime = 0;
+    }
+  }
+
+  fadeOut(soundName: string, duration: number = 500) {
+    const sound = this.sounds.get(soundName);
+    if (sound && !sound.paused) {
+      const steps = 20;
+      const stepDuration = duration / steps;
+      const volumeStep = sound.volume / steps;
+      
+      const fadeInterval = setInterval(() => {
+        if (sound.volume > volumeStep) {
+          sound.volume = Math.max(0, sound.volume - volumeStep);
+        } else {
+          sound.volume = 0;
+          sound.pause();
+          clearInterval(fadeInterval);
+          // Reset volume for next play
+          if (soundName === 'background') {
+            sound.volume = 0.3;
+          } else if (soundName === 'timer') {
+            sound.volume = 0.4;
+          }
+        }
+      }, stepDuration);
     }
   }
 
@@ -89,6 +148,7 @@ export function useSounds() {
   const stopTimer = () => soundManager.stop('timer');
   const playBackground = () => soundManager.play('background');
   const stopBackground = () => soundManager.stop('background');
+  const fadeOutBackground = (duration?: number) => soundManager.fadeOut('background', duration);
   const toggleMute = () => soundManager.toggleMute();
   const isMuted = () => soundManager.getMuted();
 
@@ -100,6 +160,7 @@ export function useSounds() {
     stopTimer,
     playBackground,
     stopBackground,
+    fadeOutBackground,
     toggleMute,
     isMuted,
   };
