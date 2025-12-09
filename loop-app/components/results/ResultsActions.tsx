@@ -4,8 +4,13 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { RotateCw, Home } from 'lucide-react';
+import { clearQuizSession } from '@/lib/api';
 
 export function ResultsActions() {
+  const handleTryAgain = () => {
+    clearQuizSession();
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -13,7 +18,7 @@ export function ResultsActions() {
       transition={{ delay: 0.6 }}
       className="flex flex-col sm:flex-row gap-4"
     >
-      <Link href="/quiz" className="flex-1">
+      <Link href="/quiz" className="flex-1" onClick={handleTryAgain}>
         <Button className="w-full bg-terracotta-300 hover:bg-terracotta-400 text-white px-8 py-6 rounded-xl font-medium transition-all hover:shadow-lg hover:scale-105">
           <RotateCw className="w-5 h-5 mr-2" />
           Try Again

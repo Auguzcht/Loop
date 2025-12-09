@@ -10,10 +10,15 @@ import { ArrowRight, Clock, ListChecks, Trophy } from 'lucide-react';
 import { useSounds } from '@/lib/sounds';
 import { Particles } from '@/components/ui/particles';
 import { Magnetic } from '@/components/ui/shadcn-io/magnetic';
+import { clearQuizSession } from '@/lib/api';
 
 export default function Home() {
   const { playBackground, stopBackground } = useSounds();
   const [isLoading, setIsLoading] = useState(false);
+
+  const handleStartQuiz = () => {
+    clearQuizSession();
+  };
 
   useEffect(() => {
     // Check if this is a hard refresh (navigation type is reload)
@@ -118,7 +123,7 @@ export default function Home() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.8, duration: 0.5 }}
         >
-          <Link href="/quiz">
+          <Link href="/quiz" onClick={handleStartQuiz}>
             <Magnetic strength={0.3} range={200}>
               <Button 
                 onClick={() => {

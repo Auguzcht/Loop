@@ -47,6 +47,15 @@ function generateSessionId(): string {
 }
 
 /**
+ * Clear the quiz session to get a new shuffle
+ */
+export function clearQuizSession(): void {
+  if (typeof window !== 'undefined') {
+    sessionStorage.removeItem('sessionId');
+  }
+}
+
+/**
  * Submits quiz answers for grading
  * @param answers - Array of user answers
  * @returns Promise with grade results
