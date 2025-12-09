@@ -35,15 +35,27 @@ export function FlashcardCarousel({ results, questions, isInView }: FlashcardCar
   };
 
   const getCorrectAnswer = () => {
-    if (!currentQuestion) return 'Loading...';
+    if (!currentQuestion || !currentResult) return 'Loading...';
     
-    if (currentQuestion.type === 'radio' || currentQuestion.type === 'text') {
-      const correctOption = currentQuestion.options?.find((opt: any) => opt.correct);
-      return correctOption?.text || currentQuestion.correctAnswer || 'N/A';
+    // Get correct answer from result data
+    const correctAnswer = currentResult.correctAnswer;
+    
+    if (currentQuestion.type === 'radio') {
+      // correctAnswer is an index, get the choice text
+      if (typeof correctAnswer === 'number' && currentQuestion.choices) {
+        return currentQuestion.choices[correctAnswer] || 'N/A';
+      }
     } else if (currentQuestion.type === 'checkbox') {
-      const correctOptions = currentQuestion.options?.filter((opt: any) => opt.correct);
-      return correctOptions?.map((opt: any) => opt.text).join(', ') || 'N/A';
+      // correctAnswer is an array of indexes
+      if (Array.isArray(correctAnswer) && currentQuestion.choices) {
+        const correctChoices = correctAnswer.map(idx => currentQuestion.choices[idx]);
+        return correctChoices.join(', ') || 'N/A';
+      }
+    } else if (currentQuestion.type === 'text') {
+      // correctAnswer is the text string
+      return correctAnswer?.toString() || 'N/A';
     }
+    
     return 'N/A';
   };
 
@@ -118,6 +130,26 @@ export function FlashcardCarousel({ results, questions, isInView }: FlashcardCar
                 </span>
               </div>
 
+              {/* User Answer (if incorrect) */}
+              {!currentResult?.correct && currentResult?.userAnswer !== undefined && (
+                <div className="space-y-2 text-center">
+                  <p className="text-sm font-medium text-brown-400">Your Answer:</p>
+                  <p className="text-lg text-red-500">
+                    {(() => {
+                      const userAnswer = currentResult.userAnswer;
+                      if (currentQuestion.type === 'radio' && typeof userAnswer === 'number') {
+                        return currentQuestion.choices?.[userAnswer] || 'N/A';
+                      } else if (currentQuestion.type === 'checkbox' && Array.isArray(userAnswer)) {
+                        return userAnswer.map(idx => currentQuestion.choices?.[idx]).join(', ') || 'None selected';
+                      } else if (currentQuestion.type === 'text') {
+                        return userAnswer?.toString() || 'N/A';
+                      }
+                      return 'N/A';
+                    })()}
+                  </p>
+                </div>
+              )}
+
               {/* Correct Answer */}
               <div className="space-y-2 text-center">
                 <p className="text-sm font-medium text-brown-400">Correct Answer:</p>
@@ -126,10 +158,13 @@ export function FlashcardCarousel({ results, questions, isInView }: FlashcardCar
                 </p>
               </div>
 
-              {/* Question Type */}
-              <p className="text-xs text-brown-400 uppercase tracking-wide">
-                {currentQuestion?.type} Question
-              </p>
+              {/* Question Type & Time */}
+              <div className="flex items-center gap-4 text-xs text-brown-400">
+                <span className="uppercase tracking-wide">{currentQuestion?.type} Question</span>
+                {currentResult?.timeSpent && (
+                  <span>• Time: {(currentResult.timeSpent / 1000).toFixed(1)}s</span>
+                )}
+              </div>
             </CardContent>
           </Card>
         </motion.div>

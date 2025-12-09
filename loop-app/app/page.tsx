@@ -9,6 +9,7 @@ import { LoadingScreen } from '@/components/shared/LoadingScreen';
 import { ArrowRight, Clock, ListChecks, Trophy } from 'lucide-react';
 import { useSounds } from '@/lib/sounds';
 import { Particles } from '@/components/ui/particles';
+import { Magnetic } from '@/components/ui/shadcn-io/magnetic';
 
 export default function Home() {
   const { playBackground, stopBackground } = useSounds();
@@ -118,18 +119,20 @@ export default function Home() {
           transition={{ delay: 0.8, duration: 0.5 }}
         >
           <Link href="/quiz">
-            <Button 
-              onClick={() => {
-                // Don't restart music, just set navigation flag
-                if (typeof sessionStorage !== 'undefined') {
-                  sessionStorage.setItem('navigatingToQuiz', 'true');
-                }
-              }}
-              className="bg-terracotta-300 hover:bg-terracotta-400 text-white px-16 py-8 rounded-2xl text-xl font-medium transition-all hover:shadow-2xl hover:shadow-terracotta-200/50 hover:scale-105"
-            >
-              Start Quiz
-              <ArrowRight className="w-6 h-6 ml-3" />
-            </Button>
+            <Magnetic strength={0.3} range={200}>
+              <Button 
+                onClick={() => {
+                  // Don't restart music, just set navigation flag
+                  if (typeof sessionStorage !== 'undefined') {
+                    sessionStorage.setItem('navigatingToQuiz', 'true');
+                  }
+                }}
+                className="bg-terracotta-300 hover:bg-terracotta-400 text-white px-16 py-8 rounded-2xl text-xl font-medium transition-all hover:shadow-2xl hover:shadow-terracotta-200/50 hover:scale-105"
+              >
+                Start Quiz
+                <ArrowRight className="w-6 h-6 ml-3" />
+              </Button>
+            </Magnetic>
           </Link>
         </motion.div>
       </motion.main>
