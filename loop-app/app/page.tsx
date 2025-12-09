@@ -17,7 +17,7 @@ export default function Home() {
   useEffect(() => {
     // Check if this is a hard refresh (navigation type is reload)
     const isHardRefresh = typeof performance !== 'undefined' && 
-      performance.getEntriesByType('navigation')[0]?.type === 'reload';
+      (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming)?.type === 'reload';
     
     if (isHardRefresh) {
       setIsLoading(true);
