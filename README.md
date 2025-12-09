@@ -1,4 +1,4 @@
-# 🔄 Loop
+# Loop
 
 > A modern full-stack quiz application demonstrating iteration through knowledge
 
@@ -25,13 +25,13 @@ Just like a `for` loop iterates through an array, Loop guides you through knowle
 
 ## ✨ Features
 
-- ✅ **3 Question Types**: Radio (single choice), Checkbox (multiple choice), Text (short answer)
-- ✅ **Timed Quiz**: 60-second countdown per question with visual warnings
-- ✅ **Smart State Management**: Custom hooks with useReducer for predictable state
-- ✅ **Responsive Design**: Seamless experience from mobile to desktop
-- ✅ **Accessibility First**: Keyboard navigation, ARIA labels, high contrast
-- ✅ **Type-Safe**: Full TypeScript coverage with Zod validation
-- ✅ **Edge Runtime**: Lightning-fast with Cloudflare Workers + Vercel Edge
+- **3 Question Types**: Radio (single choice), Checkbox (multiple choice), Text (short answer)
+- **Timed Quiz**: 60-second countdown per question with visual warnings
+- **Smart State Management**: Custom hooks with useReducer for predictable state
+- **Responsive Design**: Seamless experience from mobile to desktop
+- **Accessibility First**: Keyboard navigation, ARIA labels, high contrast
+- **Type-Safe**: Full TypeScript coverage with Zod validation
+- **Edge Runtime**: Lightning-fast with Cloudflare Workers + Vercel Edge
 
 ---
 
@@ -276,7 +276,7 @@ Built for the **Enrolla Full-Stack Developer Challenge**
 
 ## 📝 License
 
-MIT © Alfred Soriano (2024)
+MIT © Alfred Nodado (2025)
 
 ---
 
