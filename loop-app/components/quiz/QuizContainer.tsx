@@ -85,7 +85,6 @@ export function QuizContainer() {
   // Redirect to results when completed
   useEffect(() => {
     if (state.status === 'completed') {
-      playEnd();
       // Store results and questions in sessionStorage for the results page
       sessionStorage.setItem(
         'quizResults',
@@ -99,9 +98,13 @@ export function QuizContainer() {
         'quizQuestions',
         JSON.stringify(state.questions)
       );
-      router.push('/results');
+      
+      // Longer delay before navigating to results page (2.5 seconds for better UX)
+      setTimeout(() => {
+        router.push('/results');
+      }, 2500);
     }
-  }, [state.status, state.score, state.total, state.results, state.questions, router, playEnd]);
+  }, [state.status, state.score, state.total, state.results, state.questions, router]);
 
   // Loading state
   if (state.status === 'loading') {
@@ -140,8 +143,8 @@ export function QuizContainer() {
     );
   }
 
-  // Submitting state
-  if (state.status === 'submitting') {
+  // Submitting state - Show until navigation happens
+  if (state.status === 'submitting' || state.status === 'completed') {
     return (
       <div className="min-h-screen bg-cream-50 flex items-center justify-center p-4">
         <div className="text-center space-y-4">

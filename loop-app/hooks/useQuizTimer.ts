@@ -21,36 +21,42 @@ export function useQuizTimer({
   onTimeout,
 }: UseQuizTimerProps) {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const onTickRef = useRef(onTick);
+  const onTimeoutRef = useRef(onTimeout);
+
+  // Update refs to latest callbacks without triggering effect
+  useEffect(() => {
+    onTickRef.current = onTick;
+    onTimeoutRef.current = onTimeout;
+  }, [onTick, onTimeout]);
 
   const cleanup = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
   }, []);
 
   useEffect(() => {
+    // Don't restart timer if it's already running
     if (!isActive || timeRemaining <= 0) {
       cleanup();
       if (timeRemaining === 0 && isActive) {
-        onTimeout();
+        onTimeoutRef.current();
       }
       return;
     }
 
-    // Start the interval
-    intervalRef.current = setInterval(() => {
-      onTick();
-    }, 1000);
+    // Only start interval if not already running
+    if (!intervalRef.current) {
+      intervalRef.current = setInterval(() => {
+        onTickRef.current();
+      }, 1000);
+    }
 
-    // Cleanup on unmount or when dependencies change
+    // Cleanup on unmount
     return cleanup;
-  }, [isActive, timeRemaining, onTick, onTimeout, cleanup]);
+  }, [isActive, timeRemaining, cleanup]);
 
   return null;
 }

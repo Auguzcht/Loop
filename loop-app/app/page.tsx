@@ -25,9 +25,22 @@ export default function Home() {
     const isHardRefresh = typeof performance !== 'undefined' && 
       (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming)?.type === 'reload';
     
+    // Check if navigating from results
+    const fromResults = typeof sessionStorage !== 'undefined' && 
+      sessionStorage.getItem('navigatingToHome') === 'true';
+    
     if (isHardRefresh) {
       setIsLoading(true);
       const timer = setTimeout(() => setIsLoading(false), 2500);
+      return () => clearTimeout(timer);
+    }
+    
+    if (fromResults) {
+      setIsLoading(true);
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+        sessionStorage.removeItem('navigatingToHome');
+      }, 2500);
       return () => clearTimeout(timer);
     }
   }, []);

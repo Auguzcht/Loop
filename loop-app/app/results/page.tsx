@@ -9,6 +9,7 @@ import { ResultsActions } from '@/components/results/ResultsActions';
 import { ScrollIndicator } from '@/components/results/ScrollIndicator';
 import { DynamicGradient } from '@/components/results/DynamicGradient';
 import { AnalyticsSection } from '@/components/results/AnalyticsSection';
+import { useSounds } from '@/lib/sounds';
 import type { QuestionResult } from '@/types/quiz';
 
 interface QuizResults {
@@ -19,9 +20,11 @@ interface QuizResults {
 
 export default function ResultsPage() {
   const router = useRouter();
+  const { playEnd } = useSounds();
   const [results, setResults] = useState<QuizResults | null>(null);
   const [questions, setQuestions] = useState<any[]>([]);
   const [showAnalytics, setShowAnalytics] = useState(false);
+  const [hasPlayedEndSound, setHasPlayedEndSound] = useState(false);
   const analyticsRef = useRef<HTMLDivElement>(null);
   const isAnalyticsInView = useInView(analyticsRef, { once: false, margin: "0px" });
 
@@ -40,6 +43,18 @@ export default function ResultsPage() {
       setQuestions(JSON.parse(storedQuestions));
     }
   }, [router]);
+
+  // Separate effect for playing end sound - runs once when results are available
+  useEffect(() => {
+    if (results && !hasPlayedEndSound) {
+      const timer = setTimeout(() => {
+        playEnd();
+        setHasPlayedEndSound(true);
+      }, 300);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [results, hasPlayedEndSound, playEnd]);
 
   if (!results) {
     return (

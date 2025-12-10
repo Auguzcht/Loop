@@ -70,17 +70,29 @@ class SoundManager {
 
     const sound = this.sounds.get(soundName);
     if (sound) {
-      // Reset to start if already playing
-      sound.currentTime = 0;
-      sound.play().catch((err) => {
-        console.log('Sound play failed (autoplay blocked):', err);
-        
-        // If it's background music and autoplay is blocked, mark as pending
-        if (soundName === 'background' && !this.hasInteracted) {
-          this.pendingBackgroundPlay = true;
-          console.log('Background music will play after user interaction');
-        }
-      });
+      // For background music, check if it's already playing
+      if (soundName === 'background' && !sound.paused) {
+        return; // Already playing, don't restart
+      }
+
+      // Reset to start if not a looping sound or if it's finished
+      if (soundName !== 'background' && soundName !== 'timer') {
+        sound.currentTime = 0;
+      }
+      
+      const playPromise = sound.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          console.log('Sound play failed (autoplay blocked):', err);
+          
+          // If it's background music and autoplay is blocked, mark as pending
+          if (soundName === 'background' && !this.hasInteracted) {
+            this.pendingBackgroundPlay = true;
+            console.log('Background music will play after user interaction');
+          }
+        });
+      }
     }
   }
 
@@ -97,7 +109,8 @@ class SoundManager {
     if (sound && !sound.paused) {
       const steps = 20;
       const stepDuration = duration / steps;
-      const volumeStep = sound.volume / steps;
+      const startVolume = sound.volume;
+      const volumeStep = startVolume / steps;
       
       const fadeInterval = setInterval(() => {
         if (sound.volume > volumeStep) {
@@ -105,6 +118,7 @@ class SoundManager {
         } else {
           sound.volume = 0;
           sound.pause();
+          sound.currentTime = 0; // Reset for next play
           clearInterval(fadeInterval);
           // Reset volume for next play
           if (soundName === 'background') {
